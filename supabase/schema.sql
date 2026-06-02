@@ -224,23 +224,51 @@ values
   ('jewelry', 'Customized Jewelry', 1),
   ('bags', 'Customized Bags', 2),
   ('clothing', 'Customized Clothing', 3),
-  ('hats', 'Customized Hats', 4),
-  ('gifts', 'Personalized Gifts', 5),
-  ('accessories', 'Accessories', 6)
+  ('kids', 'Kids Personalized', 4),
+  ('hats', 'Customized Hats', 5),
+  ('gifts', 'Personalized Gifts', 6),
+  ('accessories', 'Accessories', 7)
 on conflict (slug) do update set name = excluded.name, sort_order = excluded.sort_order;
 
 update public.categories set needs_sizes = true where slug = 'clothing';
+update public.categories set needs_sizes = true where slug = 'kids';
+
+-- Refresh supplier catalog. Orders stay intact; old product references on historical
+-- order items become null through the existing foreign-key rules.
+delete from public.product_variants;
+delete from public.products;
 
 with seed_products(slug, category_slug, name, description, image_url, base_price, placement) as (
   values
-    ('engraved-heart-bracelet', 'jewelry', 'Engraved Heart Bracelet', 'A delicate bracelet with a polished charm for initials, names, or a short date.', 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=80', 16.90, 'front charm'),
-    ('nameplate-pendant-necklace', 'jewelry', 'Nameplate Pendant Necklace', 'A refined everyday necklace designed for a name, word, or meaningful initials.', 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=80', 18.50, 'center pendant'),
-    ('personalized-tote-bag', 'bags', 'Personalized Tote Bag', 'A clean canvas tote with embroidered name placement for daily use and gifting.', 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1200&q=80', 14.80, 'front lower corner'),
-    ('custom-cosmetic-pouch', 'bags', 'Custom Cosmetic Pouch', 'A soft pouch for makeup or travel accessories with name embroidery.', 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1200&q=80', 11.60, 'front center'),
-    ('custom-oversized-t-shirt', 'clothing', 'Custom Oversized T-Shirt', 'A soft minimal tee with a small text or initials print.', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80', 13.50, 'left chest'),
-    ('initial-baseball-cap', 'hats', 'Initial Baseball Cap', 'A clean cap with embroidered initials on the front.', 'https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=1200&q=80', 10.90, 'front panel'),
-    ('personalized-gift-box', 'gifts', 'Personalized Gift Box', 'A curated gift box finished with a custom name label.', 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=1200&q=80', 19.60, 'gift tag'),
-    ('monogram-phone-case', 'accessories', 'Monogram Phone Case', 'A simple phone case with initials and soft neutral color options.', 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=1200&q=80', 8.70, 'case center')
+    ('custom-name-tote-bag', 'bags', 'Custom Name Tote Bag', 'A personalized everyday tote bag with custom name placement.', 'https://img.kwcdn.com/product/fancy/ae505b70-a362-4eac-932c-31b576ce21f0.jpg', 16.90, 'front center'),
+    ('personalized-mini-shoulder-bag', 'bags', 'Personalized Mini Shoulder Bag', 'A compact bag with subtle custom initials or name detail.', 'https://img.kwcdn.com/product/fancy/ae4dfcf4-393f-416d-9cf1-a1c3b232fe42.jpg', 18.90, 'front flap'),
+    ('custom-cosmetic-pouch', 'bags', 'Custom Cosmetic Pouch', 'A soft pouch for makeup or travel accessories with name customization.', 'https://img.kwcdn.com/product/fancy/5e4e9480-20a1-4450-9d4d-b2cda9fd812e.jpg', 12.90, 'front center'),
+    ('personalized-chain-crossbody-bag', 'bags', 'Personalized Chain Crossbody Bag', 'A boutique-style crossbody bag with monogram customization.', 'https://img.kwcdn.com/product/fancy/63f750d5-6133-4a6b-9ee7-977df9bd9589.jpg', 22.90, 'front lower corner'),
+    ('custom-travel-organizer-bag', 'bags', 'Custom Travel Organizer Bag', 'A practical organizer bag made personal with initials or short text.', 'https://img.kwcdn.com/product/fancy/a51c5e2c-23d8-47ae-80ca-1270198b7ffb.jpg', 15.90, 'front pocket'),
+    ('personalized-everyday-handbag', 'bags', 'Personalized Everyday Handbag', 'A soft handbag with a clean custom name or monogram detail.', 'https://img.kwcdn.com/product/fancy/154f54f7-07f6-4947-b4d8-86601220da48.jpg', 24.90, 'front panel'),
+    ('personalized-name-necklace', 'jewelry', 'Personalized Name Necklace', 'A custom necklace designed for a name, word or meaningful initials.', 'https://img.kwcdn.com/product/fancy/492fe046-85ec-438f-915b-fa085d70c13e.jpg', 14.90, 'center pendant'),
+    ('custom-initial-bracelet', 'jewelry', 'Custom Initial Bracelet', 'A delicate bracelet with initials or short engraved text.', 'https://img.kwcdn.com/product/fancy/23472a28-32fb-4600-aa47-3c8b2478ba43.jpg', 12.90, 'front charm'),
+    ('engraved-charm-necklace', 'jewelry', 'Engraved Charm Necklace', 'A refined charm necklace with personal engraving.', 'https://img.kwcdn.com/product/fancy/d0327194-4f1c-4718-a5fe-9990312508b3.jpg', 15.50, 'small charm'),
+    ('custom-heart-pendant', 'jewelry', 'Custom Heart Pendant', 'A heart pendant personalized with a name or initials.', 'https://img.kwcdn.com/product/fancy/2331f4f0-4271-4dde-992c-9650a4d36fb0.jpg', 13.90, 'heart pendant'),
+    ('personalized-statement-necklace', 'jewelry', 'Personalized Statement Necklace', 'A custom jewelry piece for gifting and everyday wear.', 'https://img.kwcdn.com/product/fancy/46107965-3b07-4a2d-b4c5-93c5406d2d7b.jpg', 17.90, 'center pendant'),
+    ('personalized-gift-box', 'gifts', 'Personalized Gift Box', 'A custom gift box made personal with name, text or initials.', 'https://img.kwcdn.com/product/fancy/6d9821d9-9d30-4bf0-b96d-a70fa89d9f7d.jpg', 19.90, 'gift label'),
+    ('custom-keepsake-gift', 'gifts', 'Custom Keepsake Gift', 'A thoughtful personalized keepsake for birthdays or special days.', 'https://img.kwcdn.com/product/fancy/a313f09b-3810-42df-929b-e3c031927725.jpg', 16.50, 'front plate'),
+    ('personalized-decor-gift', 'gifts', 'Personalized Decor Gift', 'A decorative custom gift with name or message placement.', 'https://img.kwcdn.com/product/fancy/c9ccce5b-0f1b-4b37-89d7-67af8ec4b987.jpg', 21.90, 'front display'),
+    ('custom-memory-gift', 'gifts', 'Custom Memory Gift', 'A personal gift item for emotional, giftable moments.', 'https://img.kwcdn.com/product/fancy/45399aff-9fb5-46fc-a16c-581df9e9270c.jpg', 18.90, 'front center'),
+    ('kids-custom-name-set', 'kids', 'Kids Custom Name Set', 'A personalized item for children with name or initials.', 'https://img.kwcdn.com/product/open/a4eb8800026640d8b40881edaeb4ac06-goods.jpeg', 13.90, 'front center'),
+    ('personalized-kids-outfit', 'kids', 'Personalized Kids Outfit', 'A custom children''s outfit with size options and text personalization.', 'https://img.kwcdn.com/product/open/ddfbf2ae878e4095b76f5f1a801e210d-goods.jpeg', 15.90, 'front chest'),
+    ('kids-custom-gift-piece', 'kids', 'Kids Custom Gift Piece', 'A child-friendly custom item for gifts and everyday use.', 'https://img.kwcdn.com/product/fancy/market/ee2cfaa9-605f-40e6-9713-a25299daa7ee.jpg', 11.90, 'front label'),
+    ('personalized-kids-accessory', 'kids', 'Personalized Kids Accessory', 'A custom accessory for children with name or initials.', 'https://img.kwcdn.com/product/fancy/debd2e53-18d8-429d-9f1a-953c731b99d6.jpg', 9.90, 'front detail'),
+    ('kids-name-detail-item', 'kids', 'Kids Name Detail Item', 'A simple personalized product for children''s gifts.', 'https://img.kwcdn.com/product/fancy/46aee654-4471-4b2a-a00b-a40304feb91a.jpg', 10.90, 'front center'),
+    ('custom-embroidered-cap', 'hats', 'Custom Embroidered Cap', 'A cap personalized with initials, name or short text.', 'https://img.kwcdn.com/product/fancy/bf195fa8-a957-4412-b590-5619fe5352b9.jpg', 10.90, 'front panel'),
+    ('personalized-baseball-hat', 'hats', 'Personalized Baseball Hat', 'A clean baseball hat with embroidered custom text.', 'https://img.kwcdn.com/product/fancy/210bdd21-24e5-488f-b843-9fbb12d6a84e.jpg', 11.90, 'front panel'),
+    ('custom-initial-hat', 'hats', 'Custom Initial Hat', 'A minimal hat for initials, names or tiny phrases.', 'https://img.kwcdn.com/product/fancy/ca34b0a0-c05a-40e4-b0ea-81db0143a9af.jpg', 9.90, 'front panel'),
+    ('personalized-bucket-hat', 'hats', 'Personalized Bucket Hat', 'A custom bucket hat with subtle name detail.', 'https://img.kwcdn.com/product/fancy/8929ab3c-e26c-40b5-a150-7cbddb87ea63.jpg', 12.90, 'front brim'),
+    ('custom-casual-hat', 'hats', 'Custom Casual Hat', 'A casual hat made personal with custom embroidery.', 'https://img.kwcdn.com/product/fancy/dc8a4b4d-cd1d-463f-afbd-ae6944b36908.jpg', 11.50, 'front panel'),
+    ('custom-printed-t-shirt', 'clothing', 'Custom Printed T-Shirt', 'A custom tee with text, name or personal print placement.', 'https://img.kwcdn.com/product/fancy/611a2306-7f77-4c8a-a286-4396d3c5513a.jpg', 13.90, 'front chest'),
+    ('personalized-casual-top', 'clothing', 'Personalized Casual Top', 'A soft clothing piece with size options and custom text.', 'https://img.kwcdn.com/product/open/f9dbf6a915c04fdba20c660655442a0b-goods.jpeg', 15.90, 'front center'),
+    ('custom-name-shirt', 'clothing', 'Custom Name Shirt', 'A wearable custom shirt for names, initials or phrases.', 'https://img.kwcdn.com/product/fancy/ce6f8a31-2992-4c58-b0fc-99047e337b49.jpg', 14.90, 'front chest'),
+    ('personalized-apparel-piece', 'clothing', 'Personalized Apparel Piece', 'A custom apparel item with print placement and size selection.', 'https://img.kwcdn.com/product/open/2ee983416fcb4067a814673c8fbaf873-goods.jpeg', 16.90, 'front center')
 )
 insert into public.products (slug, category_id, name, description, image_url, gallery_urls, base_price, personalization_placement, is_best_seller, sold_count, tags, temu_reference)
 select
@@ -255,7 +283,7 @@ select
   seed_products.category_slug in ('jewelry', 'bags', 'clothing'),
   120,
   array['Free personalization','Giftable'],
-  'Marketplace-inspired customizable product seed. Replace with licensed supplier data in production.'
+  'Imported from client Temu share links.'
 from seed_products
 join public.categories on categories.slug = seed_products.category_slug
 on conflict (slug) do update set

@@ -162,7 +162,8 @@ export default function AdminOrdersPage() {
           ))}
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-black/10 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-black/10 bg-white shadow-sm">
+          <div className="min-w-[920px]">
           <div className="grid grid-cols-[1.1fr_1fr_0.75fr_0.7fr_0.85fr_0.8fr] bg-ink px-5 py-4 text-sm font-semibold text-white">
             <span>Order</span>
             <span><T k="customer" /></span>
@@ -213,6 +214,7 @@ export default function AdminOrdersPage() {
               </span>
             </button>
           ))}
+          </div>
         </div>
         {totalPages > 1 ? (
           <div className="flex justify-center gap-2">

@@ -8,7 +8,7 @@ const categories: AdminCategory[] = Object.entries(categoryLabels).map(([slug, n
   id: slug,
   slug,
   name,
-  needsSizes: slug === "clothing"
+  needsSizes: slug === "clothing" || slug === "kids"
 }));
 
 export async function GET() {

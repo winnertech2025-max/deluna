@@ -31,6 +31,18 @@ const emptyProduct: EditingProduct = {
   ]
 };
 
+function defaultVariantsForCategory(category: string): ProductVariant[] {
+  if (category === "clothing") return emptyProduct.variantsDraft || [];
+  if (category === "kids") {
+    return [
+      { id: "2-3Y", name: "2-3Y", price: 13.9, isDefault: true, stock: 20 },
+      { id: "4-5Y", name: "4-5Y", price: 15.9, isDefault: false, stock: 20 },
+      { id: "6-7Y", name: "6-7Y", price: 17.9, isDefault: false, stock: 20 }
+    ];
+  }
+  return [{ id: "standard", name: "Standard", price: 15, isDefault: true, stock: 20 }];
+}
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [modal, setModal] = useState<"create" | "edit" | "view" | null>(null);
@@ -118,7 +130,7 @@ export default function AdminProductsPage() {
         </div>
         <Button onClick={openCreate}><T k="createProduct" /></Button>
       </div>
-      <div className="mt-8 overflow-hidden rounded-lg border border-black/10 bg-white">
+      <div className="mt-8 overflow-x-auto rounded-lg border border-black/10 bg-white">
         <table className="w-full min-w-[960px] border-collapse text-left text-sm">
           <thead className="bg-ink text-white">
             <tr><th className="p-4">Product</th><th className="p-4">Category</th><th className="p-4">Images</th><th className="p-4">Lowest price</th><th className="p-4">Default</th><th className="p-4">Status</th><th className="p-4">Actions</th></tr>
@@ -224,8 +236,8 @@ function ProductModal({ mode, draft, setDraft, onClose, onSave }: {
         <div className="grid gap-5 p-6 xl:grid-cols-[1fr_420px]">
           <div className="space-y-4">
             <input disabled={readonly} value={draft.name || ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} placeholder="Product name" className="focus-ring w-full rounded-md border border-black/15 px-4 py-3" />
-            <select disabled={readonly} value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value as Category, variantsDraft: e.target.value === "clothing" ? emptyProduct.variantsDraft : [{ id: "standard", name: "Standard", price: 15, isDefault: true, stock: 20 }] })} className="focus-ring w-full rounded-md border border-black/15 px-4 py-3">
-              {["clothing", "jewelry", "bags", "hats", "gifts", "accessories"].map((category) => <option key={category} value={category}>{category}</option>)}
+            <select disabled={readonly} value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value as Category, variantsDraft: defaultVariantsForCategory(e.target.value) })} className="focus-ring w-full rounded-md border border-black/15 px-4 py-3">
+              {["clothing", "kids", "jewelry", "bags", "hats", "gifts", "accessories"].map((category) => <option key={category} value={category}>{category}</option>)}
             </select>
             <div className="rounded-lg border border-black/10 bg-white p-3">
               <textarea disabled={readonly} value={draft.imagesText || ""} onChange={(e) => setDraft({ ...draft, imagesText: e.target.value })} rows={5} placeholder="Image URLs, one per line" className="focus-ring w-full rounded-md border border-black/15 px-4 py-3" />

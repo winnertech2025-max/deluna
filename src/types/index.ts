@@ -2,6 +2,7 @@ export type Category =
   | "jewelry"
   | "bags"
   | "clothing"
+  | "kids"
   | "hats"
   | "gifts"
   | "accessories";
