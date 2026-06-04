@@ -15,33 +15,33 @@ export function ProductCard({ product }: { product: Product }) {
       <article className="relative overflow-hidden rounded-md border border-black/10 bg-white transition hover:-translate-y-0.5 hover:shadow-soft">
         <div className="relative aspect-[4/5] bg-nude/30">
           <Image src={product.image} alt={product.name} fill className="object-cover transition duration-500 group-hover:scale-[1.03]" />
-          <span className="absolute left-2 top-2 bg-ink/90 px-2 py-1 text-[11px] font-bold uppercase text-white">
-            Free personalization
+          <span className="absolute left-1.5 top-1.5 bg-ink/90 px-1.5 py-1 text-[9px] font-bold uppercase text-white sm:left-2 sm:top-2 sm:px-2 sm:text-[11px]">
+            Free custom
           </span>
           {product.isBestSeller ? (
-            <span className="absolute right-2 top-2 rounded-full bg-orange-500 px-2 py-1 text-[11px] font-bold text-white">HOT</span>
+            <span className="absolute right-1.5 top-1.5 rounded-full bg-orange-500 px-1.5 py-1 text-[9px] font-bold text-white sm:right-2 sm:top-2 sm:px-2 sm:text-[11px]">HOT</span>
           ) : null}
         </div>
-        <div className="space-y-2 p-3">
-          <h3 className="line-clamp-2 min-h-10 text-sm font-medium leading-5 text-ink">{product.name}</h3>
-          <div className="flex items-end gap-2">
-            <span className="text-xs text-cocoa line-through">{formatEUR(oldPrice)}</span>
-            <span className="text-lg font-bold text-orange-600">{formatEUR(price)}</span>
+        <div className="space-y-1.5 p-2.5 sm:space-y-2 sm:p-3">
+          <h3 className="line-clamp-2 min-h-9 text-xs font-medium leading-4 text-ink sm:min-h-10 sm:text-sm sm:leading-5">{product.name}</h3>
+          <div className="flex flex-wrap items-end gap-1.5 sm:gap-2">
+            <span className="text-[11px] text-cocoa line-through sm:text-xs">{formatEUR(oldPrice)}</span>
+            <span className="text-base font-bold text-orange-600 sm:text-lg">{formatEUR(price)}</span>
           </div>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs text-cocoa">{product.soldCount} sold</span>
-            <span className="flex items-center gap-0.5 text-xs font-semibold">
+            <span className="text-[11px] text-cocoa sm:text-xs">{product.soldCount} sold</span>
+            <span className="flex items-center gap-0.5 text-[11px] font-semibold sm:text-xs">
               {product.rating?.toFixed(1)}
               {Array.from({ length: 5 }).map((_, index) => (
-                <FiStar key={index} className="fill-ink" size={12} />
+                <FiStar key={index} className="hidden fill-ink min-[390px]:block" size={12} />
               ))}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className={out ? "text-xs font-bold text-red-600" : "text-xs font-bold text-green-700"}>
+            <span className={out ? "text-[11px] font-bold text-red-600 sm:text-xs" : "text-[11px] font-bold text-green-700 sm:text-xs"}>
               {out ? "Out of stock" : "10-14 business days"}
             </span>
-            <span className="grid h-9 w-9 place-items-center rounded-full border border-ink text-ink">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-ink text-ink sm:h-9 sm:w-9">
               <FiShoppingCart />
             </span>
           </div>

@@ -5,7 +5,7 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "reac
 const variants = {
   primary: "bg-ink text-white hover:bg-cocoa",
   secondary: "border border-ink/15 bg-white text-ink hover:border-ink/40",
-  gold: "bg-champagne text-ink hover:bg-[#caa85e]",
+  gold: "bg-champagne text-ink hover:bg-[#ff6b00]",
   ghost: "text-ink hover:bg-black/5"
 };
 

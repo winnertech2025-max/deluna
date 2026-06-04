@@ -64,7 +64,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           <p className="text-sm font-semibold text-cocoa">{visible.length} products · page {currentPage}/{totalPages}</p>
         </div>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-5">
           {pagedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

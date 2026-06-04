@@ -57,6 +57,13 @@ export default function LoginPage() {
         mode === "login"
           ? { name: email.split("@")[0], email, password, role: "customer" as const }
           : signupDemoUser({ name: name || email.split("@")[0], email, password });
+      if (mode === "signup") {
+        await fetch("/api/account/welcome", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: user.name, email: user.email })
+        });
+      }
       if (mode === "login") setCurrentUser(user);
       setMessage(`Welcome ${user.name}. Your account is ready.`);
       window.location.href = user.role === "admin" ? "/admin" : "/profile";

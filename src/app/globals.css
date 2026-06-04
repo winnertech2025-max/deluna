@@ -4,7 +4,7 @@
 
 :root {
   color: #161412;
-  background: #fbf6ee;
+  background: #fff7ed;
 }
 
 * {
@@ -14,8 +14,8 @@
 body {
   margin: 0;
   background:
-    linear-gradient(180deg, rgba(251, 246, 238, 0.96), rgba(255, 255, 255, 0.98)),
-    #fbf6ee;
+    linear-gradient(180deg, rgba(255, 247, 237, 0.98), rgba(255, 255, 255, 0.98)),
+    #fff7ed;
   font-family: Arial, Helvetica, sans-serif;
 }
 

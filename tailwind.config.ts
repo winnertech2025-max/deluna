@@ -5,14 +5,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        champagne: "#d8bd7f",
-        linen: "#fbf6ee",
-        nude: "#ead8c7",
+        champagne: "#ff8a00",
+        linen: "#fff7ed",
+        nude: "#ffd7ad",
         ink: "#161412",
-        cocoa: "#675849"
+        cocoa: "#6f4b2f"
       },
       boxShadow: {
-        soft: "0 18px 60px rgba(36, 26, 18, 0.08)"
+        soft: "0 18px 60px rgba(117, 56, 11, 0.10)"
       }
     }
   },
