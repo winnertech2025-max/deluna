@@ -20,8 +20,9 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="text-4xl font-semibold text-ink">Your custom bag</h1>
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+      <p className="text-sm font-bold uppercase tracking-[0.22em] text-orange-700">Personalized bag</p>
+      <h1 className="mt-2 text-3xl font-semibold text-ink sm:text-4xl">Your custom bag</h1>
       {items.length === 0 ? (
         <div className="mt-8 rounded-lg bg-white p-8 text-center">
           <p className="text-cocoa">Your cart is empty.</p>
@@ -33,7 +34,7 @@ export default function CartPage() {
             {items.map((item, index) => {
               const variant = item.product.variants.find((candidate) => candidate.id === item.variantId);
               return (
-                <div key={`${item.product.id}-${index}`} className="grid gap-4 rounded-lg border border-black/10 bg-white p-4 sm:grid-cols-[120px_1fr_auto]">
+                <div key={`${item.product.id}-${index}`} className="grid gap-4 rounded-lg border border-orange-100 bg-white p-4 shadow-sm sm:grid-cols-[120px_1fr_auto]">
                   <div className="relative aspect-square overflow-hidden rounded-md bg-linen">
                     <Image src={item.product.image} alt={item.product.name} fill className="object-cover" />
                   </div>
@@ -53,7 +54,7 @@ export default function CartPage() {
               );
             })}
           </div>
-          <aside className="h-fit rounded-lg border border-black/10 bg-white p-5">
+          <aside className="h-fit rounded-lg border border-orange-200 bg-white p-5 shadow-sm lg:sticky lg:top-28">
             <p className="text-sm font-semibold uppercase tracking-wide text-cocoa">Order summary</p>
             <div className="mt-5 flex justify-between text-lg font-bold">
               <span>Total</span>

@@ -53,7 +53,7 @@ export function ProductCustomizer({ product }: { product: Product }) {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_0.92fr]">
+    <div className="grid gap-6 lg:grid-cols-[1fr_0.92fr] lg:gap-8">
       <div className="grid gap-4 lg:grid-cols-[74px_1fr]">
         <div className="hidden space-y-3 lg:block">
           {product.gallery.map((image) => (
@@ -62,7 +62,7 @@ export function ProductCustomizer({ product }: { product: Product }) {
             </button>
           ))}
         </div>
-        <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-nude/30">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-nude/30 shadow-sm">
           {previewUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={previewUrl} alt={`${product.name} preview`} className="h-full w-full object-cover" />
@@ -82,13 +82,13 @@ export function ProductCustomizer({ product }: { product: Product }) {
         </div>
       </div>
 
-      <div className="rounded-lg border border-black/10 bg-white p-5 shadow-soft sm:p-7">
-        <div className="mb-4 flex overflow-hidden rounded-md bg-orange-600 text-sm font-bold text-white">
-          <span className="bg-red-600 px-4 py-2">Mega studio deal</span>
-          <span className="px-4 py-2">Free personalization</span>
+      <div className="rounded-lg border border-orange-200 bg-white p-4 shadow-soft sm:p-7">
+        <div className="mb-4 flex overflow-hidden rounded-md bg-orange-600 text-xs font-bold text-white sm:text-sm">
+          <span className="bg-red-600 px-3 py-2 sm:px-4">Studio deal</span>
+          <span className="px-3 py-2 sm:px-4">Free personalization</span>
         </div>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cocoa">{product.category}</p>
-        <h1 className="mt-3 text-4xl font-semibold leading-tight text-ink">{product.name}</h1>
+        <h1 className="mt-3 text-3xl font-semibold leading-tight text-ink sm:text-4xl">{product.name}</h1>
         <p className="mt-4 text-cocoa">{product.description}</p>
         <div className="mt-5 flex items-end gap-3">
           <p className="text-3xl font-bold text-orange-600">{formatEUR(selectedVariant.price)}</p>
@@ -105,7 +105,7 @@ export function ProductCustomizer({ product }: { product: Product }) {
                 <button
                   key={variant.id}
                   onClick={() => setVariantId(variant.id)}
-                  className={`min-w-20 rounded-full border px-4 py-2 text-center text-sm ${variantId === variant.id ? "border-ink bg-ink text-white" : "border-black/20"}`}
+                  className={`min-w-20 rounded-full border px-3 py-2 text-center text-sm sm:px-4 ${variantId === variant.id ? "border-champagne bg-champagne text-ink" : "border-black/20"}`}
                 >
                   <span className="block font-semibold">{variant.name}</span>
                   <span className="text-cocoa">{formatEUR(variant.price)}</span>

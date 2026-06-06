@@ -18,13 +18,13 @@ export default function HomePage() {
   return (
     <div className="bg-white">
       <section className="relative overflow-hidden bg-linen">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_20%,rgba(220,190,128,0.28),transparent_34%),linear-gradient(135deg,#fbf7f1_0%,#f3eadf_54%,#fff_100%)]" />
-        <div className="relative mx-auto grid min-h-[780px] max-w-[1480px] items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[0.88fr_1.12fr] xl:px-8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_18%,rgba(255,138,0,0.38),transparent_32%),radial-gradient(circle_at_16%_74%,rgba(255,107,0,0.20),transparent_28%),linear-gradient(135deg,#fff7ed_0%,#fff_52%,#ffedd5_100%)]" />
+        <div className="relative mx-auto grid min-h-[720px] max-w-[1480px] items-center gap-8 px-4 py-10 sm:min-h-[780px] sm:px-6 lg:grid-cols-[0.88fr_1.12fr] xl:px-8">
           <div className="relative z-10 max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-bold uppercase tracking-[0.18em] text-cocoa shadow-sm">
               <FiStar className="text-champagne" /> {t("homeEyebrow")}
             </div>
-            <h1 className="mt-5 text-5xl font-semibold leading-[1.02] text-ink sm:text-7xl">
+            <h1 className="mt-5 text-4xl font-semibold leading-[1.02] text-ink sm:text-7xl">
               {t("homeHeroTitle")}
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-cocoa">
@@ -50,7 +50,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative min-h-[640px]">
+          <div className="relative hidden min-h-[640px] sm:block">
             <div className="absolute left-0 top-8 z-10 w-[42%] overflow-hidden rounded-lg border border-black/10 bg-white p-3 shadow-soft">
               <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-linen">
                 <Image src={products[1].image} alt="Personalized jewelry" fill className="object-cover" priority />

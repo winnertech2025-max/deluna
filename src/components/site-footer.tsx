@@ -9,7 +9,7 @@ export function SiteFooter() {
   const { t } = useLanguage();
 
   return (
-    <footer className="border-t border-black/10 bg-[#171411] text-white">
+    <footer className="border-t border-black/10 bg-[#1b120b] text-white">
       <div className="mx-auto max-w-[1480px] px-4 py-12 sm:px-6 xl:px-8">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-lg border border-white/10 bg-white/[0.04] p-6">
@@ -56,6 +56,8 @@ export function SiteFooter() {
             <p className="font-semibold text-white">Support</p>
             <Link href="/contact" className="hover:text-white">{t("contact")}</Link>
             <Link href="/about" className="hover:text-white">{t("about")}</Link>
+            <Link href="/policy" className="hover:text-white">Return & Refund Policy</Link>
+            <Link href="/shipping" className="hover:text-white">Shipping Policy</Link>
             <Link href="/admin" className="hover:text-white">Admin portal</Link>
           </div>
           <div>

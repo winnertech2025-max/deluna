@@ -3,10 +3,10 @@ import { clsx } from "clsx";
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 
 const variants = {
-  primary: "bg-ink text-white hover:bg-cocoa",
-  secondary: "border border-ink/15 bg-white text-ink hover:border-ink/40",
-  gold: "bg-champagne text-ink hover:bg-[#ff6b00]",
-  ghost: "text-ink hover:bg-black/5"
+  primary: "bg-champagne text-ink shadow-[0_10px_26px_rgba(255,138,0,0.22)] hover:bg-[#ff6b00] hover:text-white",
+  secondary: "border border-orange-200 bg-white text-ink hover:border-champagne hover:bg-orange-50",
+  gold: "bg-champagne text-ink hover:bg-[#ff6b00] hover:text-white",
+  ghost: "text-ink hover:bg-orange-50"
 };
 
 type BaseProps = {

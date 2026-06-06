@@ -39,16 +39,16 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm">
-      <div className="bg-ink text-white">
+      <div className="bg-champagne text-ink">
         <div className="mx-auto grid max-w-7xl gap-2 px-4 py-2 text-xs font-semibold sm:grid-cols-3 sm:px-6">
           <span>🚚 {t("freeShipping")}</span>
           <span className="hidden text-center sm:block">✓ {t("guarantee")}</span>
           <span className="hidden text-right sm:block">💬 {t("support")}</span>
         </div>
       </div>
-      <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-4 py-3 sm:px-6">
+      <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
         <Link href="/" className="flex items-center gap-3">
-          <Image src="/images/logo-deluna-studio.png" alt="Deluna Studio" width={52} height={52} className="h-11 w-11 rounded-full object-cover" />
+          <Image src="/images/logo-deluna-studio.png" alt="Deluna Studio" width={52} height={52} className="h-10 w-10 rounded-full object-cover ring-2 ring-orange-100 sm:h-11 sm:w-11" />
           <span className="hidden text-lg font-bold tracking-[0.18em] text-ink sm:block">DELUNA</span>
         </Link>
 
@@ -92,11 +92,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center justify-end gap-2">
-          <form action="/shop" className="hidden min-w-[320px] items-center rounded-full border border-black/20 bg-white px-3 py-2 xl:flex">
+          <form action="/shop" className="hidden min-w-[320px] items-center rounded-full border border-orange-200 bg-white px-3 py-2 xl:flex">
             <input name="q" placeholder={t("searchPlaceholder")} className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
-            <button aria-label="Search" className="rounded-full bg-ink p-2 text-white"><FiSearch /></button>
+            <button aria-label="Search" className="rounded-full bg-champagne p-2 text-ink"><FiSearch /></button>
           </form>
-          <button onClick={() => setLocale(locale === "nl" ? "en" : "nl")} className="rounded-full border border-black/10 px-3 py-2 text-xs font-bold uppercase">
+          <button onClick={() => setLocale(locale === "nl" ? "en" : "nl")} className="rounded-full border border-orange-200 bg-orange-50 px-3 py-2 text-xs font-bold uppercase">
             {locale}
           </button>
           <div className="relative hidden sm:block">
@@ -133,11 +133,11 @@ export function SiteHeader() {
               </div>
             ) : null}
           </div>
-          <Link className="rounded-md p-2 hover:bg-linen sm:hidden" href="/shop" aria-label="Search products"><FiSearch size={20} /></Link>
-          <Link className="rounded-md p-2 hover:bg-linen" href={name ? "/profile" : "/login"} aria-label="Account"><FiUser size={20} /></Link>
-          <Link className="relative rounded-md p-2 hover:bg-linen" href="/cart" aria-label="Cart">
+          <Link className="rounded-md p-2 hover:bg-orange-50 sm:hidden" href="/shop" aria-label="Search products"><FiSearch size={20} /></Link>
+          <Link className="rounded-md p-2 hover:bg-orange-50" href={name ? "/profile" : "/login"} aria-label="Account"><FiUser size={20} /></Link>
+          <Link className="relative rounded-md p-2 hover:bg-orange-50" href="/cart" aria-label="Cart">
             <FiShoppingBag size={20} />
-            {count > 0 ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-[11px] text-white">{count}</span> : null}
+            {count > 0 ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-champagne px-1 text-[11px] font-bold text-ink">{count}</span> : null}
           </Link>
         </div>
       </div>
