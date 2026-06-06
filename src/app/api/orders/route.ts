@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { orderCreatedEmail, sendTransactionalEmail } from "@/lib/email";
 import { createPayPalOrder } from "@/lib/paypal";
 import { products } from "@/lib/products";
+import { createClient } from "@/lib/supabase/server";
 import { createServiceClient, hasSupabaseServerConfig } from "@/lib/supabase/service";
 import type { CartItem } from "@/types";
 
@@ -11,14 +12,27 @@ function getProductImage(productName: string) {
   return products.find((product) => product.name.toLowerCase() === productName.toLowerCase())?.image || products[0].image;
 }
 
+async function getCurrentUserId() {
+  if (!hasSupabaseServerConfig()) return null;
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    return data.user?.id || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(request: Request) {
   const payload = await request.json();
   if (hasSupabaseServerConfig()) {
     try {
       const supabase = createServiceClient();
+      const userId = await getCurrentUserId();
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert({
+          user_id: userId,
           customer_name: payload.customer?.name || "Guest",
           customer_email: payload.customer?.email || "guest@example.com",
           customer_phone: payload.customer?.phone || null,
@@ -138,10 +152,16 @@ async function sendOrderConfirmationEmail({ email, orderNumber, total, items }: 
 export async function GET() {
   if (hasSupabaseServerConfig()) {
     try {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        return NextResponse.json({ orders: [] });
+      }
+
       const supabase = createServiceClient();
       const { data, error } = await supabase
         .from("orders")
         .select("order_number,status,tracking_number,created_at,total_amount,payment_method,shipping_address,order_items(product_name,variant_name,engraving_text,engraving_font,engraving_color,quantity,unit_price,preview_url)")
+        .eq("user_id", userId)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return NextResponse.json({
@@ -165,15 +185,14 @@ export async function GET() {
             image: getProductImage(item.product_name),
             previewUrl: item.preview_url
           }))
-        })),
-        demoTracking: []
+        }))
       });
     } catch (error) {
       return NextResponse.json(
         {
           error: "Could not read orders from Supabase.",
           details: error instanceof Error ? error.message : String(error),
-          orders: memoryOrders
+          orders: []
         },
         { status: 500 }
       );
@@ -181,10 +200,6 @@ export async function GET() {
   }
 
   return NextResponse.json({
-    orders: memoryOrders,
-    demoTracking: [
-      { id: "DLN-10293014", status: "in_production", item: products[0].name, updatedAt: new Date().toISOString() },
-      { id: "DLN-10283197", status: "shipped", item: products[3].name, updatedAt: new Date().toISOString() }
-    ]
+    orders: memoryOrders
   });
 }

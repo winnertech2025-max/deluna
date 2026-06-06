@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FiBox, FiCalendar, FiCreditCard, FiMapPin, FiPackage, FiX } from "react-icons/fi";
+import { LinkButton } from "@/components/button";
 import { formatEUR } from "@/lib/money";
 
 type TrackingItem = {
@@ -41,7 +42,7 @@ export default function OrdersPage() {
   useEffect(() => {
     fetch("/api/orders")
       .then((response) => response.json())
-      .then((data) => setOrders([...(data.orders || []), ...(data.demoTracking || [])]))
+      .then((data) => setOrders(data.orders || []))
       .finally(() => setLoading(false));
   }, []);
 
@@ -84,6 +85,20 @@ export default function OrdersPage() {
             </div>
           </button>
         ))}
+
+        {!loading && orders.length === 0 ? (
+          <div className="rounded-lg border border-orange-200 bg-white p-8 text-center">
+            <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-linen text-ink"><FiPackage /></span>
+            <h2 className="mt-4 text-2xl font-semibold text-ink">No account orders yet</h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-cocoa">
+              Order history is only saved for customers who are logged in during checkout. Guest checkout orders are still confirmed by email, but they will not appear here.
+            </p>
+            <div className="mt-5 flex justify-center gap-3">
+              <LinkButton href="/login" variant="secondary">Log in</LinkButton>
+              <LinkButton href="/shop">Shop personalized items</LinkButton>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {totalPages > 1 ? (

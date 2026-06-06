@@ -24,7 +24,7 @@ type ProductRow = {
   personalization_colors: string[] | null;
   delivery_days: string | null;
   temu_reference: string | null;
-  categories?: { slug: string | null } | null;
+  categories?: { slug: string | null } | Array<{ slug: string | null }> | null;
   product_variants?: VariantRow[] | null;
 };
 
@@ -60,12 +60,13 @@ function mapVariant(row: VariantRow): ProductVariant {
 function mapProduct(row: ProductRow): Product {
   const variants = (row.product_variants || []).map(mapVariant);
   const basePrice = toNumber(row.base_price);
+  const category = Array.isArray(row.categories) ? row.categories[0]?.slug : row.categories?.slug;
 
   return {
     id: row.id,
     slug: row.slug,
     name: row.name,
-    category: toCategory(row.categories?.slug),
+    category: toCategory(category),
     description: row.description,
     image: row.image_url,
     gallery: row.gallery_urls || [],
@@ -125,7 +126,7 @@ export async function getStoreProducts() {
     .order("created_at", { ascending: true });
 
   if (error || !data?.length) return fallbackProducts;
-  return (data as ProductRow[]).map(mapProduct);
+  return (data as unknown as ProductRow[]).map(mapProduct);
 }
 
 export async function getAdminProducts() {
@@ -162,11 +163,10 @@ export async function getAdminProducts() {
     .order("created_at", { ascending: true });
 
   if (error || !data?.length) return fallbackProducts;
-  return (data as ProductRow[]).map(mapProduct);
+  return (data as unknown as ProductRow[]).map(mapProduct);
 }
 
 export async function getStoreProductBySlug(slug: string) {
   const products = await getStoreProducts();
   return products.find((product) => product.slug === slug);
 }
-
