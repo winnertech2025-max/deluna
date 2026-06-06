@@ -1,6 +1,7 @@
 import { FiFilter, FiSearch } from "react-icons/fi";
 import { ProductCard } from "@/components/product-card";
-import { categoryLabels, products } from "@/lib/products";
+import { getStoreProducts } from "@/lib/product-store";
+import { categoryLabels } from "@/lib/products";
 import type { Category, Product } from "@/types";
 
 type Params = {
@@ -15,7 +16,8 @@ type Params = {
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams;
-  let visible = filterProducts(params);
+  const products = await getStoreProducts();
+  let visible = filterProducts(params, products);
   const pageSize = 10;
   const currentPage = Math.max(1, Number(params.page || 1));
   const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
@@ -94,7 +96,7 @@ function Pagination({ currentPage, totalPages, params }: { currentPage: number; 
   );
 }
 
-function filterProducts(params: Params): Product[] {
+function filterProducts(params: Params, products: Product[]): Product[] {
   const q = (params.q || "").toLowerCase();
   const min = params.min ? Number(params.min) : undefined;
   const max = params.max ? Number(params.max) : undefined;

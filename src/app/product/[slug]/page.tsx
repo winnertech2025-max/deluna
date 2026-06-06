@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import { ProductCustomizer } from "@/components/product-customizer";
 import { ProductCard } from "@/components/product-card";
-import { getProductBySlug, products } from "@/lib/products";
+import { getStoreProductBySlug, getStoreProducts } from "@/lib/product-store";
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getStoreProductBySlug(slug);
   if (!product) notFound();
+  const products = await getStoreProducts();
   const related = products.filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4);
 
   return (
