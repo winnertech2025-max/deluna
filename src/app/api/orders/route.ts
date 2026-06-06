@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { orderCreatedEmail, sendTransactionalEmail } from "@/lib/email";
+import { createPayPalOrder } from "@/lib/paypal";
 import { products } from "@/lib/products";
 import { createServiceClient, hasSupabaseServerConfig } from "@/lib/supabase/service";
 import type { CartItem } from "@/types";
@@ -54,17 +55,38 @@ export async function POST(request: Request) {
         if (itemsError) throw itemsError;
       }
 
-      await sendTransactionalEmail({
-        to: payload.customer?.email || "guest@example.com",
-        subject: `Deluna order ${order.order_number} confirmed`,
-        html: orderCreatedEmail({
+      if (payload.paymentMethod === "paypal") {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+        const paypal = await createPayPalOrder({
           orderNumber: order.order_number,
           total: Number(payload.total || 0),
-          items: items.map((item) => {
-            const variant = item.product.variants.find((candidate) => candidate.id === item.variantId);
-            return `${item.product.name}${variant ? ` - ${variant.name}` : ""}${item.engravingText ? ` - ${item.engravingText}` : ""}`;
+          currency: "EUR",
+          description: `Deluna Studio order ${order.order_number}`,
+          returnUrl: `${siteUrl}/paypal/complete?order=${encodeURIComponent(order.order_number)}`,
+          cancelUrl: `${siteUrl}/checkout?paypal=cancelled`
+        });
+
+        await supabase
+          .from("orders")
+          .update({
+            payment_reference: paypal.paypalOrderId,
+            payment_status: "pending"
           })
-        })
+          .eq("id", order.id);
+
+        return NextResponse.json({
+          orderId: order.order_number,
+          approvalUrl: paypal.approvalUrl,
+          paypalOrderId: paypal.paypalOrderId,
+          source: "paypal"
+        });
+      }
+
+      await sendOrderConfirmationEmail({
+        email: payload.customer?.email || "guest@example.com",
+        orderNumber: order.order_number,
+        total: Number(payload.total || 0),
+        items
       });
 
       return NextResponse.json({
@@ -96,6 +118,21 @@ export async function POST(request: Request) {
   };
   memoryOrders.unshift(order);
   return NextResponse.json({ orderId: order.id, order });
+}
+
+async function sendOrderConfirmationEmail({ email, orderNumber, total, items }: { email: string; orderNumber: string; total: number; items: CartItem[] }) {
+  await sendTransactionalEmail({
+    to: email,
+    subject: `Deluna order ${orderNumber} confirmed`,
+    html: orderCreatedEmail({
+      orderNumber,
+      total,
+      items: items.map((item) => {
+        const variant = item.product.variants.find((candidate) => candidate.id === item.variantId);
+        return `${item.product.name}${variant ? ` - ${variant.name}` : ""}${item.engravingText ? ` - ${item.engravingText}` : ""}`;
+      })
+    })
+  });
 }
 
 export async function GET() {

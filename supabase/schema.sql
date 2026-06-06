@@ -87,6 +87,8 @@ create table if not exists public.orders (
   total_amount numeric(10,2) not null,
   currency text not null default 'EUR',
   payment_method text not null default 'cod' check (payment_method in ('cod', 'paypal')),
+  payment_status text not null default 'pending',
+  payment_reference text,
   tracking_number text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -114,6 +116,8 @@ alter table public.products add column if not exists rating numeric(2,1) not nul
 alter table public.products add column if not exists sold_count int not null default 0;
 alter table public.products add column if not exists tags text[] not null default '{}';
 alter table public.orders add column if not exists payment_method text not null default 'cod';
+alter table public.orders add column if not exists payment_status text not null default 'pending';
+alter table public.orders add column if not exists payment_reference text;
 alter table public.orders add column if not exists tracking_number text;
 
 create table if not exists public.returned_orders (

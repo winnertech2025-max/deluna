@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/button";
 import { cartTotal, clearCart, readCart } from "@/lib/cart";
@@ -9,6 +10,7 @@ import type { CartItem } from "@/types";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const search = useSearchParams();
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -32,10 +34,14 @@ export default function CheckoutPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    const data = (await response.json()) as { orderId?: string; error?: string; details?: string };
+    const data = (await response.json()) as { orderId?: string; approvalUrl?: string; error?: string; details?: string };
     if (!response.ok || !data.orderId) {
       alert(`${data.error || "Could not create order."}${data.details ? `\n${data.details}` : ""}`);
       setLoading(false);
+      return;
+    }
+    if (data.approvalUrl) {
+      window.location.href = data.approvalUrl;
       return;
     }
     clearCart();
@@ -46,6 +52,11 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
       <p className="text-sm font-bold uppercase tracking-[0.22em] text-orange-700">Secure checkout</p>
       <h1 className="mt-2 text-3xl font-semibold text-ink sm:text-4xl">Confirm your personalized order</h1>
+      {search.get("paypal") === "cancelled" ? (
+        <div className="mt-5 rounded-lg border border-orange-200 bg-orange-50 p-4 text-sm font-semibold text-orange-900">
+          PayPal payment was cancelled. Your cart is still here, so you can try again or choose another payment method.
+        </div>
+      ) : null}
       <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_360px] lg:gap-6">
         <form action={submit} className="rounded-lg border border-orange-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -62,7 +73,7 @@ export default function CheckoutPage() {
             </label>
             <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-md bg-white p-3 ring-1 ring-orange-100">
               <input type="radio" name="paymentMethod" value="paypal" />
-              <span><b>PayPal</b> - Pay securely with PayPal</span>
+              <span><b>PayPal</b> - Pay now securely with PayPal</span>
             </label>
           </fieldset>
           <Button disabled={loading || items.length === 0} className="mt-6 w-full">
