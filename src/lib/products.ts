@@ -41,7 +41,7 @@ type SeedProduct = {
 };
 
 const seedProducts: SeedProduct[] = [
-  { name: "Custom Name Tote Bag", category: "bags", description: "A personalized everyday tote bag with custom name placement.", price: 16.9, image: "https://img.kwcdn.com/product/fancy/ae505b70-a362-4eac-932c-31b576ce21f0.jpg", temuReference: "https://share.temu.com/GmmXVsEZI8B", placement: "front center" },
+  { name: "Custom Name Tote Bag", category: "bags", description: "A personalized everyday tote bag with custom name placement.", price: 0.01, image: "https://img.kwcdn.com/product/fancy/ae505b70-a362-4eac-932c-31b576ce21f0.jpg", temuReference: "https://share.temu.com/GmmXVsEZI8B", placement: "front center" },
   { name: "Personalized Mini Shoulder Bag", category: "bags", description: "A compact bag with subtle custom initials or name detail.", price: 18.9, image: "https://img.kwcdn.com/product/fancy/ae4dfcf4-393f-416d-9cf1-a1c3b232fe42.jpg", temuReference: "https://share.temu.com/BCbmL6qJhNB", placement: "front flap" },
   { name: "Custom Cosmetic Pouch", category: "bags", description: "A soft pouch for makeup or travel accessories with name customization.", price: 12.9, image: "https://img.kwcdn.com/product/fancy/5e4e9480-20a1-4450-9d4d-b2cda9fd812e.jpg", temuReference: "https://share.temu.com/kMJxTGiXENB", placement: "front center" },
   { name: "Personalized Chain Crossbody Bag", category: "bags", description: "A boutique-style crossbody bag with monogram customization.", price: 22.9, image: "https://img.kwcdn.com/product/fancy/63f750d5-6133-4a6b-9ee7-977df9bd9589.jpg", temuReference: "https://share.temu.com/UYrj3xGEtyB", placement: "front lower corner" },
