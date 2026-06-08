@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { calculateCheckoutTotals, type CustomerType, type ShippingCountry } from "@/lib/checkout-rules";
 import { orderCreatedEmail, sendTransactionalEmail } from "@/lib/email";
+import { saveNewsletterConsent } from "@/lib/newsletter";
 import { createPayPalOrder } from "@/lib/paypal";
 import { products } from "@/lib/products";
 import { createClient } from "@/lib/supabase/server";
@@ -25,6 +27,24 @@ async function getCurrentUserId() {
 
 export async function POST(request: Request) {
   const payload = await request.json();
+  const items = (payload.items || []) as CartItem[];
+  const subtotal = items.reduce((sum, item) => {
+    const variant = item.product.variants.find((candidate) => candidate.id === item.variantId);
+    return sum + (variant?.price || item.product.basePrice) * item.quantity;
+  }, 0);
+  const country = (payload.customer?.country || "NL") as ShippingCountry;
+  const customerType = (payload.customer?.customerType || "private") as CustomerType;
+  const totals = calculateCheckoutTotals({
+    subtotalGross: subtotal,
+    country,
+    customerType,
+    vatNumber: payload.customer?.vatNumber || ""
+  });
+
+  if (!totals.vatValid) {
+    return NextResponse.json({ error: "Invalid EU VAT number." }, { status: 400 });
+  }
+
   if (hasSupabaseServerConfig()) {
     try {
       const supabase = createServiceClient();
@@ -37,7 +57,14 @@ export async function POST(request: Request) {
           customer_email: payload.customer?.email || "guest@example.com",
           customer_phone: payload.customer?.phone || null,
           shipping_address: payload.customer?.address || "",
-          total_amount: Number(payload.total || 0),
+          shipping_country: country,
+          customer_type: customerType,
+          vat_number: totals.vatNumber || null,
+          vat_exempt: totals.vatExempt,
+          vat_amount: totals.vatAmount,
+          shipping_amount: totals.shippingGross,
+          newsletter_opt_in: Boolean(payload.customer?.newsletterOptIn),
+          total_amount: totals.total,
           currency: "EUR",
           payment_method: payload.paymentMethod || "cod",
           status: "pending"
@@ -47,7 +74,6 @@ export async function POST(request: Request) {
 
       if (orderError) throw orderError;
 
-      const items = (payload.items || []) as CartItem[];
       if (items.length > 0) {
         const orderItems = items.map((item) => {
           const variant = item.product.variants.find((candidate) => candidate.id === item.variantId);
@@ -69,11 +95,18 @@ export async function POST(request: Request) {
         if (itemsError) throw itemsError;
       }
 
+      await saveNewsletterConsent({
+        email: payload.customer?.email || "",
+        name: payload.customer?.name || "",
+        source: "checkout",
+        consent: Boolean(payload.customer?.newsletterOptIn)
+      });
+
       if (payload.paymentMethod === "paypal") {
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
         const paypal = await createPayPalOrder({
           orderNumber: order.order_number,
-          total: Number(payload.total || 0),
+          total: totals.total,
           currency: "EUR",
           description: `Deluna Studio order ${order.order_number}`,
           returnUrl: `${siteUrl}/paypal/complete?order=${encodeURIComponent(order.order_number)}`,
@@ -99,7 +132,7 @@ export async function POST(request: Request) {
       await sendOrderConfirmationEmail({
         email: payload.customer?.email || "guest@example.com",
         orderNumber: order.order_number,
-        total: Number(payload.total || 0),
+        total: totals.total,
         items
       });
 

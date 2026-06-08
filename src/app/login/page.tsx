@@ -16,9 +16,10 @@ export default function LoginPage() {
   const configured = isSupabaseConfigured();
 
   async function submit(formData: FormData) {
-    const name = String(formData.get("name") || "");
-    const email = String(formData.get("email"));
-    const password = String(formData.get("password"));
+      const name = String(formData.get("name") || "");
+      const email = String(formData.get("email"));
+      const password = String(formData.get("password"));
+      const newsletterOptIn = formData.get("newsletterOptIn") === "on";
     try {
       if (mode === "reset") {
         const code = String(formData.get("code") || "");
@@ -63,6 +64,13 @@ export default function LoginPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: user.name, email: user.email })
         });
+        if (newsletterOptIn) {
+          await fetch("/api/newsletter", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: user.name, email: user.email, source: "registration" })
+          });
+        }
       }
       if (mode === "login") setCurrentUser(user);
       setMessage(`Welcome ${user.name}. Your account is ready.`);
@@ -115,6 +123,12 @@ export default function LoginPage() {
           ) : (
             <label className="block text-sm font-semibold text-ink">Password<input name="password" type="password" required defaultValue={mode === "login" ? "Deluna@2026" : ""} className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>
           )}
+          {mode === "signup" ? (
+            <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-orange-100 bg-orange-50 p-4 text-sm text-cocoa">
+              <input type="checkbox" name="newsletterOptIn" className="mt-1" />
+              <span>Yes, I'd like to receive news & special offers. / Ja, ik ontvang graag nieuws & speciale aanbiedingen.</span>
+            </label>
+          ) : null}
           <Button className="w-full">{mode === "login" ? "Log in" : mode === "signup" ? "Create account" : "Send / verify code"}</Button>
         </form>
         {mode !== "reset" ? (

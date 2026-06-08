@@ -2,11 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { FiArrowRight, FiInstagram, FiMail, FiMapPin, FiShield, FiTruck } from "react-icons/fi";
 import { useLanguage } from "@/components/language-provider";
 
 export function SiteFooter() {
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
+  const [message, setMessage] = useState("");
+
+  async function subscribe(formData: FormData) {
+    setMessage("");
+    const email = String(formData.get("email") || "");
+    const response = await fetch("/api/newsletter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, locale, source: "footer" })
+    });
+    setMessage(response.ok ? "Thank you. You are subscribed." : "Please enter a valid email address.");
+  }
 
   return (
     <footer className="border-t border-black/10 bg-[#1b120b] text-white">
@@ -32,12 +45,13 @@ export function SiteFooter() {
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-cocoa">{t("newsletterTitle")}</p>
             <h2 className="mt-3 text-3xl font-semibold">{t("footerMessage")}</h2>
             <p className="mt-3 text-sm leading-6 text-cocoa">{t("newsletterText")}</p>
-            <form className="mt-6 flex gap-2 rounded-full bg-white p-2">
-              <input placeholder={t("emailPlaceholder")} className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none" />
+            <form action={subscribe} className="mt-6 flex gap-2 rounded-full bg-white p-2">
+              <input name="email" type="email" required placeholder={t("emailPlaceholder")} className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none" />
               <button className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white">
                 {t("subscribe")} <FiArrowRight />
               </button>
             </form>
+            {message ? <p className="mt-3 text-sm font-semibold text-cocoa">{message}</p> : null}
           </div>
         </div>
 

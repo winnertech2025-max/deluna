@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/button";
 import { cartTotal, clearCart, readCart } from "@/lib/cart";
+import { calculateCheckoutTotals, countryOptions, type CustomerType, type ShippingCountry } from "@/lib/checkout-rules";
 import { formatEUR } from "@/lib/money";
 import type { CartItem } from "@/types";
 
@@ -13,21 +14,45 @@ export default function CheckoutPage() {
   const search = useSearchParams();
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [country, setCountry] = useState<ShippingCountry>("NL");
+  const [customerType, setCustomerType] = useState<CustomerType>("private");
+  const [vatNumber, setVatNumber] = useState("");
 
   useEffect(() => setItems(readCart()), []);
 
+  const subtotal = cartTotal(items);
+  const totals = calculateCheckoutTotals({ subtotalGross: subtotal, country, customerType, vatNumber });
+
   async function submit(formData: FormData) {
+    const requestedTotals = calculateCheckoutTotals({
+      subtotalGross: cartTotal(items),
+      country: formData.get("country") as ShippingCountry,
+      customerType: formData.get("customerType") as CustomerType,
+      vatNumber: String(formData.get("vatNumber") || "")
+    });
+    if (!requestedTotals.vatValid) {
+      alert("Please enter a valid EU VAT number before applying business VAT exemption.");
+      return;
+    }
     setLoading(true);
     const payload = {
       customer: {
         name: formData.get("name"),
         email: formData.get("email"),
         phone: formData.get("phone"),
-        address: formData.get("address")
+        address: formData.get("address"),
+        country: formData.get("country"),
+        customerType: formData.get("customerType"),
+        vatNumber: requestedTotals.vatNumber,
+        newsletterOptIn: formData.get("newsletterOptIn") === "on"
       },
       paymentMethod: formData.get("paymentMethod"),
       items,
-      total: cartTotal(items)
+      subtotal: requestedTotals.subtotalGross,
+      shippingAmount: requestedTotals.shippingGross,
+      vatAmount: requestedTotals.vatAmount,
+      vatExempt: requestedTotals.vatExempt,
+      total: requestedTotals.total
     };
     const response = await fetch("/api/orders", {
       method: "POST",
@@ -63,8 +88,37 @@ export default function CheckoutPage() {
             <label className="text-sm font-semibold text-ink">Full name<input name="name" required className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>
             <label className="text-sm font-semibold text-ink">Email<input name="email" type="email" required className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>
             <label className="text-sm font-semibold text-ink">Phone<input name="phone" required className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>
+            <label className="text-sm font-semibold text-ink">
+              Country
+              <select name="country" value={country} onChange={(event) => setCountry(event.target.value as ShippingCountry)} className="focus-ring mt-2 w-full rounded-md border border-black/15 bg-white px-4 py-3">
+                {countryOptions.map((option) => <option key={option.code} value={option.code}>{option.label}</option>)}
+              </select>
+            </label>
+            <label className="text-sm font-semibold text-ink">
+              Customer type
+              <select name="customerType" value={customerType} onChange={(event) => setCustomerType(event.target.value as CustomerType)} className="focus-ring mt-2 w-full rounded-md border border-black/15 bg-white px-4 py-3">
+                <option value="private">Private customer</option>
+                <option value="business">Business customer</option>
+              </select>
+            </label>
+            <label className="text-sm font-semibold text-ink">
+              VAT number {customerType === "business" ? "" : "(optional)"}
+              <input
+                name="vatNumber"
+                value={vatNumber}
+                onChange={(event) => setVatNumber(event.target.value)}
+                placeholder="NL123456789B01"
+                className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3 uppercase"
+              />
+              {customerType === "business" && vatNumber && !totals.vatValid ? <span className="mt-1 block text-xs text-red-600">Enter a valid EU VAT number.</span> : null}
+              {customerType === "business" && totals.vatExempt ? <span className="mt-1 block text-xs font-semibold text-green-700">EU reverse charge applied. No VAT charged.</span> : null}
+            </label>
             <label className="text-sm font-semibold text-ink sm:col-span-2">Delivery address<textarea name="address" required rows={4} className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>
           </div>
+          <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-lg border border-orange-100 bg-orange-50 p-4 text-sm text-cocoa">
+            <input type="checkbox" name="newsletterOptIn" className="mt-1" />
+            <span>Yes, I'd like to receive news & special offers. / Ja, ik ontvang graag nieuws & speciale aanbiedingen.</span>
+          </label>
           <fieldset className="mt-6 rounded-lg border border-orange-200 bg-linen p-4">
             <legend className="px-2 text-sm font-semibold text-ink">Payment method / Betaalmethode</legend>
             <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-md bg-white p-3 ring-1 ring-orange-100">
@@ -90,9 +144,17 @@ export default function CheckoutPage() {
               </div>
             ))}
           </div>
+          <div className="mt-5 space-y-3 border-t border-white/10 pt-5 text-sm">
+            <div className="flex justify-between"><span className="text-white/70">Subtotal</span><span>{formatEUR(totals.subtotalGross)}</span></div>
+            <div className="flex justify-between"><span className="text-white/70">Shipping</span><span>{totals.shippingGross === 0 ? "Free" : formatEUR(totals.shippingGross)}</span></div>
+            <div className="flex justify-between"><span className="text-white/70">VAT 21%</span><span>{totals.vatExempt ? "Reverse charge" : formatEUR(totals.vatAmount)}</span></div>
+            <p className="rounded-md bg-white/10 p-3 text-xs text-white/70">
+              Free shipping from {formatEUR(totals.shippingRule.threshold)} for {totals.shippingRule.label}.
+            </p>
+          </div>
           <div className="mt-5 flex justify-between border-t border-white/10 pt-5 text-lg font-bold">
             <span>Total</span>
-            <span>{formatEUR(cartTotal(items))}</span>
+            <span>{formatEUR(totals.total)}</span>
           </div>
         </aside>
       </div>

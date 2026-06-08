@@ -10,9 +10,9 @@ const content = {
     intro: "Alle producten van Deluna Studio worden speciaal voor iedere klant gemaakt of gepersonaliseerd. Daarom hebben bestellingen verwerkingstijd nodig voordat ze worden verzonden.",
     cards: [
       ["Verwerkingstijd", "7-10 werkdagen, afhankelijk van product, personalisatie en ordervolume."],
-      ["Nederland", "1-3 werkdagen na verzending."],
-      ["Belgie en Duitsland", "2-5 werkdagen na verzending."],
-      ["Andere Europese landen", "3-10 werkdagen na verzending."]
+      ["Nederland", "EUR4,95 verzending onder EUR49. Gratis verzending vanaf EUR49. Levertijd 1-3 werkdagen na verzending."],
+      ["Belgie en Duitsland", "EUR6,95 verzending onder EUR69. Gratis verzending vanaf EUR69. Levertijd 2-5 werkdagen na verzending."],
+      ["Frankrijk en EU", "FR: EUR7,95 onder EUR69. Rest van Europa: EUR9,95 onder EUR99. Gratis boven de drempel."]
     ],
     sections: [
       ["Drukke periodes", "Tijdens drukke periodes, feestdagen of speciale promoties kan de verwerkingstijd iets langer zijn."],
@@ -30,9 +30,9 @@ const content = {
     intro: "All Deluna Studio products are made or personalized specifically for each customer. Because of this, orders require processing time before shipping.",
     cards: [
       ["Processing time", "7-10 business days depending on the product, personalization requirements, and order volume."],
-      ["Netherlands", "1-3 business days after shipping."],
-      ["Belgium and Germany", "2-5 business days after shipping."],
-      ["Other European countries", "3-10 business days after shipping."]
+      ["Netherlands", "EUR4.95 shipping below EUR49. Free shipping from EUR49. Delivery is 1-3 business days after shipping."],
+      ["Belgium and Germany", "EUR6.95 shipping below EUR69. Free shipping from EUR69. Delivery is 2-5 business days after shipping."],
+      ["France and EU", "FR: EUR7.95 below EUR69. Rest of Europe: EUR9.95 below EUR99. Free above the threshold."]
     ],
     sections: [
       ["Busy periods", "During busy periods, holidays, or special promotions, processing times may be slightly longer."],
