@@ -25,7 +25,14 @@ export async function POST(request: Request) {
     placement: body.placement || "the most natural personalization area",
     productName: body.productName || "custom product"
   };
-  const provider = (process.env.AI_PREVIEW_PROVIDER || "mock").toLowerCase();
+  const provider = resolvePreviewProvider();
+  console.info("[AI preview] request", {
+    provider,
+    hasHuggingFaceToken: Boolean(getHuggingFaceToken()),
+    hasOpenAiKey: Boolean(process.env.OPENAI_API_KEY),
+    huggingFaceProvider: process.env.HUGGINGFACE_PROVIDER || "fal-ai",
+    huggingFaceModel: process.env.HUGGINGFACE_MODEL || "fal-ai/flux-kontext/dev"
+  });
 
   if (provider === "openai") {
     try {
@@ -39,7 +46,7 @@ export async function POST(request: Request) {
 
   if (provider === "huggingface") {
     try {
-      const token = process.env.HUGGINGFACE_API_KEY || process.env.HF_TOKEN;
+      const token = getHuggingFaceToken();
       if (!token) throw new Error("HUGGINGFACE_API_KEY or HF_TOKEN is missing.");
       const previewUrl = await generateHuggingFacePreview(previewRequest, token);
       return NextResponse.json({ previewUrl, provider: "huggingface" });
@@ -49,6 +56,23 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ previewUrl: generateMockPreview({ image, text, font: body.font, color: body.color }), provider: "mock" });
+}
+
+function resolvePreviewProvider() {
+  const configured = (process.env.AI_PREVIEW_PROVIDER || "").trim().toLowerCase();
+  const hasHuggingFace = Boolean(getHuggingFaceToken());
+  const hasOpenAi = Boolean(process.env.OPENAI_API_KEY);
+  const fallbackToMock = process.env.AI_PREVIEW_FALLBACK_TO_MOCK === "true";
+
+  if (configured === "mock" && hasHuggingFace && !fallbackToMock) return "huggingface";
+  if (configured) return configured;
+  if (hasHuggingFace) return "huggingface";
+  if (hasOpenAi) return "openai";
+  return "mock";
+}
+
+function getHuggingFaceToken() {
+  return process.env.HUGGINGFACE_API_KEY || process.env.HF_TOKEN;
 }
 
 async function generateOpenAiPreview({
@@ -138,12 +162,14 @@ async function generateHuggingFacePreview(
     process.env.HUGGINGFACE_ENDPOINT ||
     `https://router.huggingface.co/${encodeURIComponent(huggingFaceProvider)}/${model.split("/").map(encodeURIComponent).join("/")}`;
   const prompt = [
-    `Edit this ${productName} product photo into a realistic ecommerce personalization preview.`,
-    `Add exactly this customer text: "${sanitizePromptText(text)}".`,
-    `Place it on ${placement}.`,
-    `Use a ${font} style and ${color} color if visually appropriate.`,
-    "Keep the original product, material, background, lighting, camera angle, and composition.",
-    "Do not add any extra text, watermark, logo, labels, hands, or packaging."
+    "Use the input image as the strict source image.",
+    `Only edit the visible product by adding this exact personalization text: "${sanitizePromptText(text)}".`,
+    `Place the text on ${placement}.`,
+    `Use a ${font} lettering style and ${color} color if it matches the product material.`,
+    "Preserve the same product type, shape, material, color, background, lighting, camera angle, crop, and composition.",
+    `The final image must still look like the same ${productName} from the input image.`,
+    "Do not redesign the product, do not create a different product, do not invent a new necklace, bracelet, bag, pendant, or scene.",
+    "Do not add any extra text, watermark, logo, labels, hands, packaging, or decorative elements."
   ].join(" ");
 
   const response = await fetch(endpoint, {
