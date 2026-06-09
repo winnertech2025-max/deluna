@@ -1,11 +1,4 @@
-export type Category =
-  | "jewelry"
-  | "bags"
-  | "clothing"
-  | "kids"
-  | "hats"
-  | "gifts"
-  | "accessories";
+export type Category = string;
 
 export type ProductStatus = "active" | "out_of_stock" | "draft";
 

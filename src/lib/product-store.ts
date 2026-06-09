@@ -36,10 +36,8 @@ type VariantRow = {
   is_default: boolean | null;
 };
 
-const validCategories = new Set<Category>(["jewelry", "bags", "clothing", "kids", "hats", "gifts", "accessories"]);
-
 function toCategory(value?: string | null): Category {
-  return validCategories.has(value as Category) ? (value as Category) : "accessories";
+  return value || "personalized-accessories";
 }
 
 function toNumber(value: number | string | null | undefined, fallback = 0) {

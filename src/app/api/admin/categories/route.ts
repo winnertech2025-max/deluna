@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin";
-import { categoryLabels } from "@/lib/products";
+import { allCategoryItems } from "@/lib/category-menu";
 
-type AdminCategory = { id: string; slug: string; name: string; needsSizes: boolean };
+type AdminCategory = { id: string; slug: string; name: string; needsSizes: boolean; parentSlug?: string | null };
 
-const categories: AdminCategory[] = Object.entries(categoryLabels).map(([slug, name]) => ({
-  id: slug,
-  slug,
-  name,
-  needsSizes: slug === "clothing" || slug === "kids"
+const categories: AdminCategory[] = allCategoryItems.map((item) => ({
+  id: item.slug,
+  slug: item.slug,
+  name: item.label,
+  parentSlug: item.parentSlug,
+  needsSizes: ["t-shirts", "hoodies", "sweaters", "caps-hats"].includes(item.slug)
 }));
 
 export async function GET() {

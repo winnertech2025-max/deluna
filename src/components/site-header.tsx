@@ -3,12 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FiChevronDown, FiSearch, FiShoppingBag, FiUser } from "react-icons/fi";
+import { FiChevronDown, FiMessageCircle, FiSearch, FiShoppingBag, FiTruck, FiUser } from "react-icons/fi";
 import { readCart } from "@/lib/cart";
+import { categoryMenu } from "@/lib/category-menu";
 import { getCurrentUser, logoutDemoUser } from "@/lib/demo-auth";
-import { categoryDescriptions, categoryImages, categoryLabels } from "@/lib/products";
 import { useLanguage } from "@/components/language-provider";
-import type { Category } from "@/types";
 
 export function SiteHeader() {
   const [count, setCount] = useState(0);
@@ -17,7 +16,6 @@ export function SiteHeader() {
   const [name, setName] = useState("");
   const [role, setRole] = useState<"customer" | "admin" | "guest">("guest");
   const { locale, setLocale, t } = useLanguage();
-  const categories = Object.entries(categoryLabels) as Array<[Category, string]>;
 
   useEffect(() => {
     const sync = () => {
@@ -39,11 +37,17 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm">
-      <div className="bg-champagne text-ink">
-        <div className="mx-auto grid max-w-7xl gap-2 px-4 py-2 text-xs font-semibold sm:grid-cols-3 sm:px-6">
-          <span>🚚 {t("freeShipping")}</span>
-          <span className="hidden text-center sm:block">✓ {t("guarantee")}</span>
-          <span className="hidden text-right sm:block">💬 {t("support")}</span>
+      <div className="border-b border-orange-200 bg-[#fff7ed] text-ink">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 overflow-x-auto px-3 py-2 text-[11px] font-bold sm:justify-between sm:px-6 sm:text-xs">
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-orange-100">
+            <FiTruck className="text-orange-600" /> {t("freeShipping")}
+          </span>
+          <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-orange-100 sm:inline-flex">
+            <span className="grid h-4 w-4 place-items-center rounded-full bg-orange-500 text-[10px] text-white">✓</span> {t("guarantee")}
+          </span>
+          <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-orange-100 md:inline-flex">
+            <FiMessageCircle className="text-orange-600" /> {t("support")}
+          </span>
         </div>
       </div>
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
@@ -59,29 +63,32 @@ export function SiteHeader() {
               {t("categories")} <FiChevronDown className={open ? "rotate-180" : ""} />
             </button>
             {open ? (
-              <div className="absolute left-1/2 top-11 grid w-[760px] -translate-x-1/2 grid-cols-[220px_1fr] overflow-hidden rounded-lg border border-black/10 bg-white shadow-soft">
-                <div className="bg-linen p-3">
-                  {categories.map(([key, label]) => (
-                    <Link key={key} href={`/shop?category=${key}`} className="flex items-center gap-3 rounded-md px-3 py-3 font-semibold hover:bg-white" onClick={() => setOpen(false)}>
-                      <span className="relative h-10 w-10 overflow-hidden rounded-full bg-white">
-                        <Image src={categoryImages[key]} alt={label} fill className="object-cover" />
-                      </span>
-                      <span>{label}</span>
-                    </Link>
-                  ))}
+              <div className="absolute left-1/2 top-11 w-[960px] -translate-x-1/2 rounded-md border border-black/10 bg-white px-8 py-7 shadow-soft">
+                <div className="grid grid-cols-6 gap-7">
+                {categoryMenu.map((group) => {
+                  const Icon = group.icon;
+                  return (
+                    <div key={group.slug} className="min-w-0">
+                      <Link href={`/shop?category=${group.slug}`} onClick={() => setOpen(false)} className="flex items-center gap-2 text-[13px] font-extrabold uppercase tracking-[0.08em] text-ink hover:text-orange-700">
+                        <Icon className="h-4 w-4 text-orange-600" />
+                        <span className="leading-5">{group.label.replace("Personalized ", "")}</span>
+                      </Link>
+                      <div className="mt-4 grid gap-2">
+                        {group.children.map(([slug, label]) => (
+                          <Link key={slug} href={`/shop?category=${slug}`} onClick={() => setOpen(false)} className="block text-[13px] leading-5 text-cocoa transition hover:text-orange-700">
+                            {label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
                 </div>
-                <div className="grid grid-cols-3 gap-4 p-5">
-                  {categories.map(([key, label]) => (
-                    <Link key={key} href={`/shop?category=${key}`} onClick={() => setOpen(false)} className="overflow-hidden rounded-lg border border-black/10 bg-white hover:border-champagne">
-                      <span className="relative block h-24 bg-linen">
-                        <Image src={categoryImages[key]} alt={label} fill className="object-cover" />
-                      </span>
-                      <span className="block p-3">
-                        <span className="block font-semibold text-ink">{label}</span>
-                        <span className="mt-1 line-clamp-2 block text-xs leading-5 text-cocoa">{categoryDescriptions[key]}</span>
-                      </span>
-                    </Link>
-                  ))}
+                <div className="mt-7 flex items-center justify-between border-t border-black/10 pt-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cocoa">Choose it. Personalize it. Make it yours.</p>
+                  <Link href="/shop?best=1" onClick={() => setOpen(false)} className="rounded-full bg-ink px-5 py-2 text-xs font-bold uppercase tracking-[0.08em] text-white hover:bg-orange-600">
+                    Best sellers
+                  </Link>
                 </div>
               </div>
             ) : null}

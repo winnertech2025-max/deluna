@@ -1,14 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { FiArrowRight, FiCheckCircle, FiEdit3, FiGift, FiHeart, FiShield, FiStar, FiTruck } from "react-icons/fi";
+import { FiArrowRight, FiEdit3, FiGift, FiHeart, FiShield, FiStar, FiTruck } from "react-icons/fi";
 import { LinkButton } from "@/components/button";
 import { useLanguage } from "@/components/language-provider";
 import { ProductCard } from "@/components/product-card";
-import { categoryDescriptions, categoryImages, categoryLabels, products } from "@/lib/products";
-import type { Category, Product } from "@/types";
+import { categoryMenu } from "@/lib/category-menu";
+import { products } from "@/lib/products";
+import type { Product } from "@/types";
 
-const categoryKeys = Object.keys(categoryLabels) as Category[];
+const categoryImages = [
+  "https://img.kwcdn.com/product/fancy/492fe046-85ec-438f-915b-fa085d70c13e.jpg",
+  "https://img.kwcdn.com/product/fancy/611a2306-7f77-4c8a-a286-4396d3c5513a.jpg",
+  "https://img.kwcdn.com/product/fancy/c9ccce5b-0f1b-4b37-89d7-67af8ec4b987.jpg",
+  "https://img.kwcdn.com/product/fancy/ae505b70-a362-4eac-932c-31b576ce21f0.jpg",
+  "https://img.kwcdn.com/product/fancy/debd2e53-18d8-429d-9f1a-953c731b99d6.jpg",
+  "https://img.kwcdn.com/product/fancy/6d9821d9-9d30-4bf0-b96d-a70fa89d9f7d.jpg"
+];
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -17,86 +25,66 @@ export default function HomePage() {
 
   return (
     <div className="bg-white">
-      <section className="relative overflow-hidden bg-linen">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_18%,rgba(255,138,0,0.38),transparent_32%),radial-gradient(circle_at_16%_74%,rgba(255,107,0,0.20),transparent_28%),linear-gradient(135deg,#fff7ed_0%,#fff_52%,#ffedd5_100%)]" />
-        <div className="relative mx-auto grid min-h-[720px] max-w-[1480px] items-center gap-8 px-4 py-10 sm:min-h-[780px] sm:px-6 lg:grid-cols-[0.88fr_1.12fr] xl:px-8">
+      <section className="relative overflow-hidden bg-[#fff8ef]">
+        <div className="absolute inset-0 bg-[linear-gradient(115deg,#fffaf4_0%,#fff_43%,#ffe5c4_100%)]" />
+        <div className="relative mx-auto grid max-w-[1480px] items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:min-h-[690px] lg:grid-cols-[0.94fr_1.06fr] xl:px-8">
           <div className="relative z-10 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-bold uppercase tracking-[0.18em] text-cocoa shadow-sm">
-              <FiStar className="text-champagne" /> {t("homeEyebrow")}
+            <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white/85 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-cocoa shadow-sm">
+              <FiStar className="text-orange-500" /> {t("homeEyebrow")}
             </div>
-            <h1 className="mt-5 text-4xl font-semibold leading-[1.02] text-ink sm:text-7xl">
+            <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[0.98] text-ink sm:text-6xl xl:text-7xl">
               {t("homeHeroTitle")}
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-cocoa">
+            <p className="mt-6 max-w-xl text-lg leading-8 text-cocoa sm:text-xl">
               {t("homeHeroBody")}
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <LinkButton href="/shop">{t("startCustomizing")} <FiArrowRight /></LinkButton>
               <LinkButton href="/shop?best=1" variant="secondary">{t("shopGifts")}</LinkButton>
             </div>
-            <div className="mt-8 flex max-w-xl flex-wrap gap-2">
-              {categoryKeys.slice(0, 5).map((key) => (
-                <a key={key} href={`/shop?category=${key}`} className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-ink shadow-sm transition hover:bg-champagne">
-                  {categoryLabels[key]}
-                </a>
-              ))}
-            </div>
-            <div className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
-              {[t("pickProduct"), t("addName"), t("previewBeforeOrder")].map((item) => (
-                <div key={item} className="rounded-lg border border-black/10 bg-white p-4 text-sm font-semibold text-ink shadow-sm">
-                  <FiCheckCircle className="mb-3 text-cocoa" /> {item}
+            <div className="mt-10 grid max-w-xl grid-cols-3 divide-x divide-black/10 rounded-lg border border-black/10 bg-white/80 shadow-sm">
+              {[
+                ["29+", t("customProducts")],
+                ["10-14", t("deliveryStep")],
+                ["0 EUR", t("aiPreview")]
+              ].map(([value, label]) => (
+                <div key={value} className="p-4">
+                  <p className="text-xl font-semibold text-ink">{value}</p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-cocoa">{label}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="relative hidden min-h-[640px] sm:block">
-            <div className="absolute left-0 top-8 z-10 w-[42%] overflow-hidden rounded-lg border border-black/10 bg-white p-3 shadow-soft">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-linen">
-                <Image src={products[1].image} alt="Personalized jewelry" fill className="object-cover" priority />
-              </div>
-              <div className="p-3">
-                <p className="text-sm font-semibold text-ink">Nameplate Pendant Necklace</p>
-                <p className="mt-1 text-sm text-cocoa">Preview: Luna</p>
-              </div>
-            </div>
-
-            <div className="absolute right-0 top-0 w-[62%] overflow-hidden rounded-lg border border-black/10 bg-white p-3 shadow-soft">
-              <div className="relative aspect-[5/4] overflow-hidden rounded-md bg-linen">
-                <Image src={products[3].image} alt="Personalized bag" fill className="object-cover" />
-                <div className="absolute left-5 top-5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink shadow-sm">Free personalization</div>
-              </div>
-              <div className="grid grid-cols-[1fr_auto] items-center gap-3 p-3">
-                <div>
-                  <p className="font-semibold text-ink">Personalized Tote Bag</p>
-                  <p className="text-sm text-cocoa">Add name, color and placement</p>
+          <div className="relative">
+            <div className="relative overflow-hidden rounded-xl border border-white/80 bg-white p-3 shadow-soft">
+              <div className="relative aspect-[5/4] overflow-hidden rounded-lg bg-linen sm:aspect-[4/3] lg:aspect-[5/4]">
+                <Image src={products[3].image} alt="Personalized Deluna product" fill className="object-cover" priority />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-transparent" />
+                <div className="absolute left-5 top-5 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink shadow-sm">
+                  Free personalization
                 </div>
-                <span className="rounded-full bg-ink px-4 py-2 text-sm font-bold text-white">€14.80</span>
-              </div>
-            </div>
-
-            <div className="absolute bottom-8 left-[18%] w-[44%] overflow-hidden rounded-lg border border-black/10 bg-white p-3 shadow-soft">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-linen">
-                <Image src={products[6].image} alt="Custom clothing" fill className="object-cover" />
-                <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 rounded-md border-2 border-dashed border-white bg-ink/70 px-4 py-3 text-center text-lg font-bold text-white">
-                  YOUR TEXT
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute bottom-14 right-4 z-20 w-[38%] rounded-lg border border-black/10 bg-white p-5 shadow-soft">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-cocoa">Ready to personalize</p>
-              <div className="mt-4 space-y-3">
-                {["Choose product", "Type your name", "Confirm preview"].map((text, index) => (
-                  <div key={text} className="flex items-center gap-3">
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-champagne text-xs font-bold text-ink">{index + 1}</span>
-                    <span className="text-sm font-semibold text-ink">{text}</span>
+                <div className="absolute inset-x-5 bottom-5 rounded-lg bg-white/92 p-5 shadow-sm backdrop-blur">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-cocoa">Choose it. Personalize it.</p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    {[
+                      t("chooseProductStep"),
+                      t("addTextStep"),
+                      t("previewStep")
+                    ].map((step, index) => (
+                      <div key={step} className="flex items-center gap-2 text-sm font-semibold text-ink">
+                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-orange-500 text-xs text-white">{index + 1}</span>
+                        {step}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
-              <a href="/shop" className="mt-5 flex items-center justify-center gap-2 rounded-md bg-ink px-4 py-3 text-sm font-bold text-white">
-                Start now <FiArrowRight />
-              </a>
+            </div>
+            <div className="pointer-events-none absolute -bottom-5 -left-5 hidden w-44 rounded-lg border border-black/10 bg-white p-4 shadow-soft lg:block">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-cocoa">{t("previewBeforeOrder")}</p>
+              <p className="mt-2 text-2xl font-semibold text-ink">Luna</p>
+              <p className="mt-1 text-sm text-cocoa">Name preview</p>
             </div>
           </div>
         </div>
@@ -111,7 +99,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1480px] px-4 py-16 sm:px-6 xl:px-8">
+      <section className="mx-auto max-w-[1480px] px-4 py-12 sm:px-6 xl:px-8">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.24em] text-cocoa">{t("customProducts")}</p>
@@ -119,19 +107,29 @@ export default function HomePage() {
           </div>
           <LinkButton href="/shop" variant="ghost">{t("viewAllCategories")} <FiArrowRight /></LinkButton>
         </div>
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {categoryKeys.map((key) => (
-            <a key={key} href={`/shop?category=${key}`} className="group overflow-hidden rounded-lg border border-black/10 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
-              <div className="relative h-56 bg-linen">
-                <Image src={categoryImages[key]} alt={categoryLabels[key]} fill className="object-cover transition duration-500 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-transparent" />
-                <p className="absolute bottom-4 left-4 text-2xl font-semibold text-white">{categoryLabels[key]}</p>
-              </div>
-              <div className="p-5">
-                <p className="text-sm leading-6 text-cocoa">{categoryDescriptions[key]}</p>
-              </div>
-            </a>
-          ))}
+        <div className="-mx-4 mt-8 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:-mx-6 sm:px-6 xl:-mx-8 xl:px-8 [&::-webkit-scrollbar]:hidden">
+          <div className="flex min-w-max gap-4">
+            {categoryMenu.map((category, index) => {
+              const Icon = category.icon;
+              return (
+                <a key={category.slug} href={`/shop?category=${category.slug}`} className="group w-[235px] shrink-0 overflow-hidden rounded-lg border border-black/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft sm:w-[260px]">
+                  <div className="relative h-44 bg-linen">
+                    <Image src={categoryImages[index]} alt={category.label} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-transparent" />
+                    <span className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-white/95 text-orange-600 shadow-sm">
+                      <Icon />
+                    </span>
+                    <div className="absolute inset-x-4 bottom-4">
+                      <p className="max-w-[190px] text-xl font-semibold leading-tight text-white">{category.label}</p>
+                      <span className="mt-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-white/80">
+                        Explore <FiArrowRight />
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
         </div>
       </section>
 

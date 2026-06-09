@@ -1,8 +1,8 @@
 import { FiFilter, FiSearch } from "react-icons/fi";
 import { ProductCard } from "@/components/product-card";
+import { categoryMenu } from "@/lib/category-menu";
 import { getStoreProducts } from "@/lib/product-store";
-import { categoryLabels } from "@/lib/products";
-import type { Category, Product } from "@/types";
+import type { Product } from "@/types";
 
 type Params = {
   category?: string;
@@ -23,7 +23,6 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
   const pagedProducts = visible.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const active = params.category || "all";
-  const categories = Object.entries(categoryLabels) as Array<[Category, string]>;
   const suggestions = ["naam ketting", "custom tas", "initial bracelet", "custom t shirt", "personalized gift", "monogram case"];
 
   return (
@@ -50,8 +49,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         <div className="flex gap-2 overflow-x-auto border-b border-black/10 pb-5 sm:flex-wrap sm:overflow-visible">
           <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold"><FiFilter /> Filters</span>
           <a className={pill(active === "all")} href="/shop">All</a>
-          {categories.map(([key, label]) => (
-            <a key={key} className={pill(active === key)} href={`/shop?category=${key}`}>{label}</a>
+          {categoryMenu.map((group) => (
+            <a key={group.slug} className={pill(active === group.slug)} href={`/shop?category=${group.slug}`}>{group.label}</a>
           ))}
           <a className={pill(params.best === "1")} href="/shop?best=1">Best sellers</a>
           <a className={pill(params.sort === "price_asc")} href={withParam(params, "sort", "price_asc")}>Price low</a>
@@ -101,7 +100,9 @@ function filterProducts(params: Params, products: Product[]): Product[] {
   const min = params.min ? Number(params.min) : undefined;
   const max = params.max ? Number(params.max) : undefined;
   let result = products.filter((product) => {
-    const matchesCategory = !params.category || params.category === "all" || product.category === params.category;
+    const activeGroup = categoryMenu.find((group) => group.slug === params.category);
+    const groupChildren = (activeGroup?.children.map(([slug]) => slug) || []) as string[];
+    const matchesCategory = !params.category || params.category === "all" || product.category === params.category || groupChildren.includes(product.category);
     const matchesBest = params.best === "1" ? product.isBestSeller : true;
     const matchesQuery = q
       ? `${product.name} ${product.description} ${product.tags?.join(" ")}`.toLowerCase().includes(q)

@@ -5,6 +5,7 @@ import { FiImage, FiMinusCircle } from "react-icons/fi";
 import { AdminShell } from "@/components/admin-shell";
 import { Button } from "@/components/button";
 import { T } from "@/components/t";
+import { allCategoryItems } from "@/lib/category-menu";
 import { formatEUR } from "@/lib/money";
 import { getLowestPrice } from "@/lib/products";
 import type { Category, Product, ProductVariant } from "@/types";
@@ -18,7 +19,7 @@ type EditingProduct = Partial<Product> & {
 
 const emptyProduct: EditingProduct = {
   name: "",
-  category: "clothing",
+  category: "t-shirts",
   description: "",
   image: "",
   imagesText: "",
@@ -32,8 +33,8 @@ const emptyProduct: EditingProduct = {
 };
 
 function defaultVariantsForCategory(category: string): ProductVariant[] {
-  if (category === "clothing") return emptyProduct.variantsDraft || [];
-  if (category === "kids") {
+  if (["t-shirts", "hoodies", "sweaters", "caps-hats"].includes(category)) return emptyProduct.variantsDraft || [];
+  if (category === "baby-shower-gifts") {
     return [
       { id: "2-3Y", name: "2-3Y", price: 13.9, isDefault: true, stock: 20 },
       { id: "4-5Y", name: "4-5Y", price: 15.9, isDefault: false, stock: 20 },
@@ -237,7 +238,7 @@ function ProductModal({ mode, draft, setDraft, onClose, onSave }: {
           <div className="space-y-4">
             <input disabled={readonly} value={draft.name || ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} placeholder="Product name" className="focus-ring w-full rounded-md border border-black/15 px-4 py-3" />
             <select disabled={readonly} value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value as Category, variantsDraft: defaultVariantsForCategory(e.target.value) })} className="focus-ring w-full rounded-md border border-black/15 px-4 py-3">
-              {["clothing", "kids", "jewelry", "bags", "hats", "gifts", "accessories"].map((category) => <option key={category} value={category}>{category}</option>)}
+              {allCategoryItems.map((category) => <option key={category.slug} value={category.slug}>{category.parentSlug ? " - " : ""}{category.label}</option>)}
             </select>
             <div className="rounded-lg border border-black/10 bg-white p-3">
               <textarea disabled={readonly} value={draft.imagesText || ""} onChange={(e) => setDraft({ ...draft, imagesText: e.target.value })} rows={5} placeholder="Image URLs, one per line" className="focus-ring w-full rounded-md border border-black/15 px-4 py-3" />

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FiMail, FiMapPin, FiPhone, FiShoppingBag, FiUser } from "react-icons/fi";
+import { FiDownload, FiMail, FiMapPin, FiPhone, FiShoppingBag, FiUser } from "react-icons/fi";
 import { AdminShell } from "@/components/admin-shell";
+import { LinkButton } from "@/components/button";
 import { formatEUR } from "@/lib/money";
 
 type Customer = {
@@ -33,12 +34,15 @@ export default function AdminCustomersPage() {
 
   return (
     <AdminShell>
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cocoa">Customer studio</p>
-        <h1 className="mt-2 text-4xl font-semibold text-ink">Customer management</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-cocoa">
-          Customers are grouped from real orders, including contact details, order count and delivered revenue.
-        </p>
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cocoa">Customer studio</p>
+          <h1 className="mt-2 text-4xl font-semibold text-ink">Customer management</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-cocoa">
+            Customers are grouped from real orders, including contact details, order count and delivered revenue.
+          </p>
+        </div>
+        <LinkButton href="/api/admin/subscribers/export" variant="secondary"><FiDownload /> Export subscribers</LinkButton>
       </div>
 
       <div className="mt-8 grid gap-4 md:grid-cols-3">
