@@ -16,6 +16,7 @@ export function ProductCustomizer({ product }: { product: Product }) {
   const [font, setFont] = useState(product.personalization.fonts[0]);
   const [color, setColor] = useState(product.personalization.colors[0]);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
+  const [previewError, setPreviewError] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [added, setAdded] = useState(false);
@@ -28,14 +29,29 @@ export function ProductCustomizer({ product }: { product: Product }) {
 
   async function generatePreview() {
     setLoadingPreview(true);
-    const response = await fetch("/api/preview", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId: product.id, image: product.image, engravingText, font, color })
-    });
-    const data = (await response.json()) as { previewUrl: string };
-    setPreviewUrl(data.previewUrl);
-    setLoadingPreview(false);
+    setPreviewError("");
+    try {
+      const response = await fetch("/api/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          productName: product.name,
+          image: product.gallery[0] || product.image,
+          engravingText,
+          font,
+          color,
+          placement: product.personalization.placement
+        })
+      });
+      const data = (await response.json()) as { previewUrl?: string; error?: string };
+      if (!response.ok || !data.previewUrl) throw new Error(data.error || "Could not generate preview.");
+      setPreviewUrl(data.previewUrl);
+    } catch (error) {
+      setPreviewError(error instanceof Error ? error.message : "Could not generate preview.");
+    } finally {
+      setLoadingPreview(false);
+    }
   }
 
   function addToCart() {
@@ -159,6 +175,9 @@ export function ProductCustomizer({ product }: { product: Product }) {
           <Button onClick={generatePreview} variant="gold" disabled={!engravingText || loadingPreview} className="w-full">
             {loadingPreview ? "Generating preview..." : "AI preview maken"} <FiImage />
           </Button>
+          {previewError ? (
+            <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">{previewError}</p>
+          ) : null}
 
           <div className="rounded-lg bg-linen p-4 text-sm leading-6 text-cocoa">
             <p className="font-semibold text-ink">Delivery estimate: {product.deliveryDays}</p>
