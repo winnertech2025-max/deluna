@@ -27,7 +27,7 @@ export function SiteFooter() {
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-lg border border-white/10 bg-white/[0.04] p-6">
             <div className="flex items-center gap-4">
-              <Image src="/images/logo-deluna-studio.png" alt="Deluna Studio" width={64} height={64} className="h-16 w-16 rounded-full object-cover" />
+              <Image src="/images/rmbg.png" alt="Deluna Studio" width={64} height={64} className="h-16 w-16 rounded-full object-cover" />
               <div>
                 <p className="text-xl font-bold tracking-[0.22em]">DELUNA</p>
                 <p className="mt-1 text-sm uppercase tracking-[0.2em] text-champagne">Customized your pieces</p>

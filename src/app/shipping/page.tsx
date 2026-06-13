@@ -1,6 +1,6 @@
 "use client";
 
-import { FiClock, FiMail, FiMapPin, FiPackage, FiTruck } from "react-icons/fi";
+import { FiClock, FiMail, FiPackage, FiTruck } from "react-icons/fi";
 import { useLanguage } from "@/components/language-provider";
 
 const content = {
@@ -51,38 +51,53 @@ export default function ShippingPage() {
   const text = content[locale];
 
   return (
-    <main className="bg-linen">
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
-        <div className="rounded-lg border border-orange-200 bg-white p-6 shadow-soft sm:p-8">
-          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.22em] text-orange-700"><FiTruck /> {text.eyebrow}</p>
-          <h1 className="mt-4 text-4xl font-semibold leading-tight text-ink sm:text-5xl">{text.title}</h1>
-          <p className="mt-5 text-base leading-8 text-cocoa sm:text-lg">{text.intro}</p>
+    <main className="bg-white">
+      <section className="border-b border-orange-100 bg-[#fff8f0]">
+        <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:py-20">
+          <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-orange-600"><FiTruck /> {text.eyebrow}</p>
+          <h1 className="mt-5 max-w-3xl text-4xl font-black leading-tight text-ink sm:text-5xl">{text.title}</h1>
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-cocoa">{text.intro}</p>
         </div>
+      </section>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:py-16">
+        <div className="overflow-hidden border-y border-orange-100">
           {text.cards.map(([title, body], index) => (
-            <div key={title} className="rounded-lg border border-black/10 bg-white p-5 shadow-sm">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-orange-100 text-orange-700">
-                {index === 0 ? <FiClock /> : <FiMapPin />}
-              </span>
-              <h2 className="mt-4 font-semibold text-ink">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-cocoa">{body}</p>
+            <div key={title} className="grid gap-3 border-b border-orange-100 py-5 last:border-b-0 sm:grid-cols-[220px_1fr] sm:gap-8">
+              <h2 className="flex items-center gap-2 font-black text-ink">
+                {index === 0 ? <FiClock className="text-orange-500" /> : <FiTruck className="text-orange-500" />}
+                {title}
+              </h2>
+              <p className="leading-7 text-cocoa">{body}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-6 grid gap-4">
-          {text.sections.map(([title, body]) => (
-            <article key={title} className="rounded-lg border border-black/10 bg-white p-5 shadow-sm">
-              <h2 className="flex items-center gap-2 text-xl font-semibold text-ink"><FiPackage className="text-champagne" /> {title}</h2>
-              <p className="mt-3 leading-7 text-cocoa">{body}</p>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-6 rounded-lg bg-ink p-5 text-white">
-          <p className="flex items-center gap-2 font-semibold"><FiMail /> {text.contact}</p>
-        </div>
+        <article className="mt-12 grid gap-10 lg:grid-cols-[240px_1fr]">
+          <aside className="hidden lg:block">
+            <div className="sticky top-28 border-l border-orange-200 pl-5">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-cocoa">Details</p>
+              <div className="mt-4 grid gap-3">
+                {text.sections.map(([title]) => (
+                  <a key={title} href={`#${title.toLowerCase().replaceAll(" ", "-")}`} className="text-sm font-semibold leading-5 text-cocoa hover:text-orange-600">
+                    {title}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </aside>
+          <div className="divide-y divide-orange-100 border-y border-orange-100">
+            {text.sections.map(([title, body]) => (
+              <section key={title} id={title.toLowerCase().replaceAll(" ", "-")} className="py-8 first:pt-0 last:pb-0">
+                <h2 className="flex items-center gap-2 text-2xl font-black leading-tight text-ink"><FiPackage className="text-orange-500" /> {title}</h2>
+                <p className="mt-4 leading-8 text-cocoa">{body}</p>
+              </section>
+            ))}
+            <div className="mt-8 border-l-4 border-orange-500 bg-[#fff8f0] p-5">
+              <p className="flex items-center gap-2 font-bold text-ink"><FiMail /> {text.contact}</p>
+            </div>
+          </div>
+        </article>
       </section>
     </main>
   );

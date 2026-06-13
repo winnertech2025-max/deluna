@@ -2,24 +2,34 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { FiChevronDown, FiMessageCircle, FiSearch, FiShoppingBag, FiTruck, FiUser } from "react-icons/fi";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { FiChevronDown, FiSearch, FiShoppingBag, FiTruck, FiUser } from "react-icons/fi";
+import { CartDrawer } from "@/components/cart-drawer";
 import { readCart } from "@/lib/cart";
 import { categoryMenu } from "@/lib/category-menu";
 import { getCurrentUser, logoutDemoUser } from "@/lib/demo-auth";
 import { useLanguage } from "@/components/language-provider";
+import type { CartItem } from "@/types";
 
 export function SiteHeader() {
   const [count, setCount] = useState(0);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [name, setName] = useState("");
   const [role, setRole] = useState<"customer" | "admin" | "guest">("guest");
   const { locale, setLocale, t } = useLanguage();
+  const pathname = usePathname();
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sync = () => {
-      setCount(readCart().reduce((total, item) => total + item.quantity, 0));
+      const nextCart = readCart();
+      setCartItems(nextCart);
+      setCount(nextCart.reduce((total, item) => total + item.quantity, 0));
       const user = getCurrentUser();
       setName(user?.name || window.localStorage.getItem("deluna_profile_name") || "");
       setRole(user?.role || (window.localStorage.getItem("deluna_profile_role") as "customer" | "admin" | null) || "guest");
@@ -35,6 +45,22 @@ export function SiteHeader() {
     };
   }, []);
 
+  useEffect(() => {
+    setOpen(false);
+    setAccountOpen(false);
+    setCartOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent) {
+      const target = event.target as Node;
+      if (categoryRef.current && !categoryRef.current.contains(target)) setOpen(false);
+      if (accountRef.current && !accountRef.current.contains(target)) setAccountOpen(false);
+    }
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm">
       <div className="border-b border-orange-200 bg-[#fff7ed] text-ink">
@@ -42,23 +68,20 @@ export function SiteHeader() {
           <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-orange-100">
             <FiTruck className="text-orange-600" /> {t("freeShipping")}
           </span>
-          <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-orange-100 sm:inline-flex">
-            <span className="grid h-4 w-4 place-items-center rounded-full bg-orange-500 text-[10px] text-white">✓</span> {t("guarantee")}
-          </span>
-          <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-orange-100 md:inline-flex">
+        
+          {/* <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-orange-100 md:inline-flex">
             <FiMessageCircle className="text-orange-600" /> {t("support")}
-          </span>
+          </span> */}
         </div>
       </div>
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
         <Link href="/" className="flex items-center gap-3">
-          <Image src="/images/logo-deluna-studio.png" alt="Deluna Studio" width={52} height={52} className="h-10 w-10 rounded-full object-cover ring-2 ring-orange-100 sm:h-11 sm:w-11" />
+          <Image src="/images/rmbg.png" alt="Deluna Studio" width={52} height={52} className="h-10 w-10 rounded-full object-cover sm:h-11 sm:w-11" />
           <span className="hidden text-lg font-bold tracking-[0.18em] text-ink sm:block">DELUNA</span>
         </Link>
 
         <nav className="hidden items-center justify-center gap-7 text-sm font-medium text-cocoa lg:flex">
-          <Link href="/shop">{t("shop")}</Link>
-          <div className="relative">
+          <div className="relative" ref={categoryRef}>
             <button onClick={() => setOpen((value) => !value)} className="flex items-center gap-1 rounded-full px-3 py-2 hover:bg-linen">
               {t("categories")} <FiChevronDown className={open ? "rotate-180" : ""} />
             </button>
@@ -106,9 +129,10 @@ export function SiteHeader() {
           <button onClick={() => setLocale(locale === "nl" ? "en" : "nl")} className="rounded-full border border-orange-200 bg-orange-50 px-3 py-2 text-xs font-bold uppercase">
             {locale}
           </button>
-          <div className="relative hidden sm:block">
-            <button onClick={() => setAccountOpen((value) => !value)} className="rounded-md px-3 py-2 text-sm font-semibold hover:bg-linen">
-              {name || t("account")}
+          <div className="relative" ref={accountRef}>
+            <button onClick={() => setAccountOpen((value) => !value)} className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold hover:bg-linen">
+              {name ? <span className="hidden max-w-[140px] truncate sm:inline">{name}</span> : <span className="hidden sm:inline">Login</span>}
+              {/* <FiUser size={19} /> */}
             </button>
             {accountOpen ? (
               <div className="absolute right-0 top-11 w-56 overflow-hidden rounded-lg border border-black/10 bg-white py-2 shadow-soft">
@@ -133,21 +157,21 @@ export function SiteHeader() {
                   </>
                 ) : (
                   <>
-                    <Link href="/login" className="block px-4 py-3 text-sm hover:bg-linen">Login</Link>
-                    <Link href="/login?mode=signup" className="block px-4 py-3 text-sm hover:bg-linen">Create account</Link>
+                    <Link href="/login" className="block px-4 py-3 text-sm hover:bg-linen" onClick={() => setAccountOpen(false)}>Login</Link>
+                    <Link href="/login?mode=signup" className="block px-4 py-3 text-sm hover:bg-linen" onClick={() => setAccountOpen(false)}>Create account</Link>
                   </>
                 )}
               </div>
             ) : null}
           </div>
           <Link className="rounded-md p-2 hover:bg-orange-50 sm:hidden" href="/shop" aria-label="Search products"><FiSearch size={20} /></Link>
-          <Link className="rounded-md p-2 hover:bg-orange-50" href={name ? "/profile" : "/login"} aria-label="Account"><FiUser size={20} /></Link>
-          <Link className="relative rounded-md p-2 hover:bg-orange-50" href="/cart" aria-label="Cart">
+          <button className="relative rounded-md p-2 hover:bg-orange-50" onClick={() => setCartOpen(true)} aria-label="Cart">
             <FiShoppingBag size={20} />
             {count > 0 ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-champagne px-1 text-[11px] font-bold text-ink">{count}</span> : null}
-          </Link>
+          </button>
         </div>
       </div>
+      <CartDrawer open={cartOpen} items={cartItems} onClose={() => setCartOpen(false)} onItemsChange={setCartItems} />
     </header>
   );
 }

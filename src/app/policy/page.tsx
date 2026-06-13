@@ -1,7 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { FiAlertCircle, FiCheckCircle, FiMail, FiRotateCcw } from "react-icons/fi";
+import { FiMail, FiRotateCcw } from "react-icons/fi";
 import { useLanguage } from "@/components/language-provider";
 
 const content = {
@@ -98,41 +97,44 @@ export default function PolicyPage() {
   const text = content[locale];
 
   return (
-    <PolicyLayout eyebrow={text.eyebrow} title={text.title} intro={text.intro} icon={<FiRotateCcw />}>
-      <div className="grid gap-4">
-        {text.sections.map((section, index) => (
-          <article key={section.title} className="rounded-lg border border-black/10 bg-white p-5 shadow-sm">
-            <div className="flex items-start gap-3">
-              <span className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-orange-100 text-orange-700">
-                {index === 0 ? <FiAlertCircle /> : <FiCheckCircle />}
-              </span>
-              <div>
-                <h2 className="text-xl font-semibold text-ink">{section.title}</h2>
-                <div className="mt-3 space-y-3 leading-7 text-cocoa">
+    <main className="bg-white">
+      <section className="border-b border-orange-100 bg-[#fff8f0]">
+        <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:py-20">
+          <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-orange-600"><FiRotateCcw /> {text.eyebrow}</p>
+          <h1 className="mt-5 max-w-3xl text-4xl font-black leading-tight text-ink sm:text-5xl">{text.title}</h1>
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-cocoa">{text.intro}</p>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-5xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[240px_1fr] lg:py-16">
+        <aside className="hidden lg:block">
+          <div className="sticky top-28 border-l border-orange-200 pl-5">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cocoa">On this page</p>
+            <div className="mt-4 grid gap-3">
+              {text.sections.map((section) => (
+                <a key={section.title} href={`#${section.title.toLowerCase().replaceAll(" ", "-")}`} className="text-sm font-semibold leading-5 text-cocoa hover:text-orange-600">
+                  {section.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        <article className="prose-policy">
+          <div className="divide-y divide-orange-100 border-y border-orange-100">
+            {text.sections.map((section) => (
+              <section key={section.title} id={section.title.toLowerCase().replaceAll(" ", "-")} className="py-8 first:pt-0 last:pb-0">
+                <h2 className="text-2xl font-black leading-tight text-ink">{section.title}</h2>
+                <div className="mt-4 space-y-4 text-base leading-8 text-cocoa">
                   {section.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
                 </div>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-      <div className="mt-6 rounded-lg bg-ink p-5 text-white">
-        <p className="flex items-center gap-2 font-semibold"><FiMail /> {text.contact}</p>
-      </div>
-    </PolicyLayout>
-  );
-}
-
-function PolicyLayout({ eyebrow, title, intro, icon, children }: { eyebrow: string; title: string; intro: string; icon: ReactNode; children: ReactNode }) {
-  return (
-    <main className="bg-linen">
-      <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:py-14">
-        <div className="rounded-lg border border-orange-200 bg-white p-6 shadow-soft sm:p-8">
-          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.22em] text-orange-700">{icon} {eyebrow}</p>
-          <h1 className="mt-4 text-4xl font-semibold leading-tight text-ink sm:text-5xl">{title}</h1>
-          <p className="mt-5 text-base leading-8 text-cocoa sm:text-lg">{intro}</p>
-        </div>
-        <div className="mt-6">{children}</div>
+              </section>
+            ))}
+          </div>
+          <div className="mt-8 border-l-4 border-orange-500 bg-[#fff8f0] p-5">
+            <p className="flex items-center gap-2 font-bold text-ink"><FiMail /> {text.contact}</p>
+          </div>
+        </article>
       </section>
     </main>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { FiHeart, FiPenTool, FiStar } from "react-icons/fi";
+import { FiArrowRight, FiHeart, FiPenTool, FiStar } from "react-icons/fi";
+import { LinkButton } from "@/components/button";
 import { useLanguage } from "@/components/language-provider";
 
 const copy = {
@@ -19,7 +20,8 @@ const copy = {
       "Van sieraden en accessoires tot tassen, kleding en cadeaus: elk product is ontworpen om individualiteit, creativiteit en persoonlijke verhalen te vieren."
     ],
     mission: "Mensen inspireren om producten te creeren, personaliseren en koesteren die echt bij hen passen.",
-    close: "Want de mooiste producten zijn niet altijd de duurste. Het zijn de producten die jouw verhaal vertellen."
+    close: "Want de mooiste producten zijn niet altijd de duurste. Het zijn de producten die jouw verhaal vertellen.",
+    cta: "Ontdek de collectie"
   },
   en: {
     eyebrow: "About Deluna Studio",
@@ -35,7 +37,8 @@ const copy = {
       "From jewelry and accessories to bags, clothing, and gifts, every item is designed to celebrate individuality and creativity."
     ],
     mission: "To inspire people to create, personalize, and cherish products that truly belong to them.",
-    close: "Because the most meaningful things are the ones that tell your story."
+    close: "Because the most meaningful things are the ones that tell your story.",
+    cta: "Explore the collection"
   }
 } as const;
 
@@ -45,41 +48,54 @@ export default function AboutPage() {
 
   return (
     <div className="bg-white">
-      <section className="relative overflow-hidden bg-linen">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,138,0,0.25),transparent_30%),linear-gradient(135deg,#fff7ed_0%,#fff_58%,#ffedd5_100%)]" />
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.78fr_1.22fr] lg:py-16">
-          <div className="relative min-h-[360px] overflow-hidden rounded-lg bg-ink shadow-soft sm:min-h-[520px]">
-            <Image src="/images/logo-deluna-studio.png" alt="Deluna Studio logo" fill className="object-cover opacity-90" priority />
-            <div className="absolute inset-x-5 bottom-5 rounded-lg bg-white/92 p-4 text-ink backdrop-blur">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-cocoa">Deluna Studio</p>
-              <p className="mt-2 text-2xl font-semibold">{text.title}</p>
+      <section className="relative overflow-hidden bg-[#fff8f0]">
+        <div className="mx-auto grid max-w-[1480px] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:py-20 xl:px-8">
+          <div className="flex flex-col justify-center">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-orange-600">{text.eyebrow}</p>
+            <h1 className="mt-5 max-w-xl font-serif text-5xl font-bold leading-[1.02] text-ink sm:text-6xl">{text.title}</h1>
+            <p className="mt-6 max-w-2xl text-xl leading-9 text-cocoa">{text.intro[0]}</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <LinkButton href="/shop" className="bg-orange-600 text-white hover:bg-orange-700">
+                {text.cta} <FiArrowRight />
+              </LinkButton>
+              <LinkButton href="/contact" variant="secondary">Contact</LinkButton>
             </div>
           </div>
 
-          <div className="self-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cocoa">{text.eyebrow}</p>
-            <h1 className="mt-4 text-4xl font-semibold leading-tight text-ink sm:text-6xl">
-              {text.title}
-            </h1>
-            <div className="mt-6 space-y-4 text-base leading-8 text-cocoa sm:text-lg">
-              {[...text.intro, ...text.body].map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          <div className="relative min-h-[420px] overflow-hidden rounded-xl bg-ink shadow-2xl">
+            <Image src="/images/bannerhero.png" alt="Deluna personalized studio" fill className="object-cover" priority />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6 text-white">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-200">Deluna Studio</p>
+              <p className="mt-2 max-w-md text-2xl font-black leading-tight">{text.close}</p>
             </div>
-            <div className="mt-8 rounded-lg border border-orange-200 bg-orange-50 p-5">
-              <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-orange-700"><FiStar /> Mission</p>
-              <p className="mt-3 text-xl font-semibold leading-8 text-ink">{text.mission}</p>
-              <p className="mt-3 leading-7 text-cocoa">{text.close}</p>
-            </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {[
-                ["Creative", FiPenTool],
-                ["Personal", FiHeart],
-                ["Giftable", FiStar]
-              ].map(([label, Icon]) => (
-                <div key={String(label)} className="rounded-lg border border-black/10 bg-white p-4 font-semibold text-ink shadow-sm">
-                  <Icon className="mb-3 text-champagne" /> {String(label)}
-                </div>
-              ))}
-            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-[1180px] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[280px_1fr] lg:py-20">
+        <aside>
+          <div className="sticky top-28 grid gap-3">
+            {[
+              ["Creative", FiPenTool],
+              ["Personal", FiHeart],
+              ["Giftable", FiStar]
+            ].map(([label, Icon]) => (
+              <div key={String(label)} className="flex items-center gap-3 border-b border-orange-100 py-4 font-black text-ink">
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-orange-50 text-orange-600"><Icon /></span>
+                {String(label)}
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        <div>
+          <div className="space-y-5 text-lg leading-9 text-cocoa">
+            {[...text.intro.slice(1), ...text.body].map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </div>
+          <div className="mt-10 border-l-4 border-orange-500 bg-[#fff8f0] p-6">
+            <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.18em] text-orange-700"><FiStar /> Mission</p>
+            <p className="mt-4 text-2xl font-black leading-9 text-ink">{text.mission}</p>
           </div>
         </div>
       </section>
