@@ -64,13 +64,13 @@ export function CartDrawer({ open, items, onClose, onItemsChange }: CartDrawerPr
                 const variant = item.product.variants.find((candidate) => candidate.id === item.variantId);
                 const price = (variant?.price || item.product.basePrice) * item.quantity;
                 return (
-                  <div key={`${item.product.id}-${index}`} className="grid grid-cols-[92px_1fr] gap-4 rounded-lg border border-orange-100 bg-[#fff8f0] p-3">
+                  <div key={`${item.product.id}-${index}`} className="grid grid-cols-[76px_minmax(0,1fr)] gap-3 rounded-lg border border-orange-100 bg-[#fff8f0] p-3 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-4">
                     <div className="relative aspect-square overflow-hidden rounded-md bg-white">
                       <Image src={item.product.image} alt={item.product.name} fill className="object-cover" />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-start justify-between gap-3">
-                        <h3 className="line-clamp-2 text-sm font-black leading-5 text-ink">{item.product.name}</h3>
+                        <h3 className="min-w-0 line-clamp-2 text-sm font-black leading-5 text-ink">{item.product.name}</h3>
                         <button onClick={() => remove(index)} className="text-cocoa hover:text-red-600" aria-label="Remove item">
                           <FiTrash2 />
                         </button>

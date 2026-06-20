@@ -45,9 +45,9 @@ export function SiteFooter() {
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-cocoa">{t("newsletterTitle")}</p>
             <h2 className="mt-3 text-3xl font-semibold">{t("footerMessage")}</h2>
             <p className="mt-3 text-sm leading-6 text-cocoa">{t("newsletterText")}</p>
-            <form action={subscribe} className="mt-6 flex gap-2 rounded-full bg-white p-2">
+            <form action={subscribe} className="mt-6 flex flex-col gap-2 rounded-2xl bg-white p-2 sm:flex-row sm:rounded-full">
               <input name="email" type="email" required placeholder={t("emailPlaceholder")} className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none" />
-              <button className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white">
+              <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white">
                 {t("subscribe")} <FiArrowRight />
               </button>
             </form>

@@ -79,7 +79,7 @@ export default function OrdersPage() {
                 {order.trackingNumber ? <span>Tracking: {order.trackingNumber}</span> : null}
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-left md:text-right">
               <p className="text-xl font-semibold text-ink">{formatEUR(Number(order.total || 0))}</p>
               <p className="mt-1 text-sm text-cocoa">View detail</p>
             </div>
@@ -137,16 +137,16 @@ export default function OrdersPage() {
               <h3 className="text-xl font-semibold text-ink">Items</h3>
               <div className="mt-4 space-y-3">
                 {(selected.items || []).map((item, index) => (
-                  <div key={`${item.name}-${index}`} className="grid gap-4 rounded-lg border border-black/10 p-4 md:grid-cols-[96px_1fr_auto]">
+                  <div key={`${item.name}-${index}`} className="grid gap-4 rounded-lg border border-black/10 p-4 md:grid-cols-[96px_minmax(0,1fr)_auto]">
                     <div className="aspect-square overflow-hidden rounded-md bg-linen">
                       {item.previewUrl || item.image ? <img src={item.previewUrl || item.image || ""} alt={item.name} className="h-full w-full object-cover" /> : null}
                     </div>
-                    <div>
-                      <p className="font-semibold text-ink">{item.name}</p>
+                    <div className="min-w-0">
+                      <p className="break-words font-semibold text-ink">{item.name}</p>
                       <p className="mt-2 text-sm text-cocoa">Variant: {item.variant || "Standard"} · Qty: {item.quantity}</p>
                       <p className="mt-1 text-sm text-cocoa">Engraving: {item.engravingText || "None"} · {item.engravingFont || "Default"} · {item.engravingColor || "Default"}</p>
                     </div>
-                    <p className="font-semibold text-ink">{formatEUR(item.unitPrice * item.quantity)}</p>
+                    <p className="font-semibold text-ink md:text-right">{formatEUR(item.unitPrice * item.quantity)}</p>
                   </div>
                 ))}
               </div>

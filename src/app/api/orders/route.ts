@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { calculateCheckoutTotals, type CustomerType, type ShippingCountry } from "@/lib/checkout-rules";
 import { orderCreatedEmail, sendTransactionalEmail } from "@/lib/email";
+import { createMolliePayment } from "@/lib/mollie";
 import { saveNewsletterConsent } from "@/lib/newsletter";
 import { createPayPalOrder } from "@/lib/paypal";
 import { products } from "@/lib/products";
@@ -126,6 +127,33 @@ export async function POST(request: Request) {
           approvalUrl: paypal.approvalUrl,
           paypalOrderId: paypal.paypalOrderId,
           source: "paypal"
+        });
+      }
+
+      if (payload.paymentMethod === "mollie") {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+        const mollie = await createMolliePayment({
+          orderNumber: order.order_number,
+          total: totals.total,
+          currency: "EUR",
+          description: `Deluna Studio order ${order.order_number}`,
+          redirectUrl: `${siteUrl}/mollie/complete?order=${encodeURIComponent(order.order_number)}`,
+          webhookUrl: `${siteUrl}/api/mollie/webhook`
+        });
+
+        await supabase
+          .from("orders")
+          .update({
+            payment_reference: mollie.molliePaymentId,
+            payment_status: "pending"
+          })
+          .eq("id", order.id);
+
+        return NextResponse.json({
+          orderId: order.order_number,
+          approvalUrl: mollie.checkoutUrl,
+          molliePaymentId: mollie.molliePaymentId,
+          source: "mollie"
         });
       }
 

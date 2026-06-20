@@ -86,7 +86,7 @@ create table if not exists public.orders (
   status public.order_status not null default 'pending',
   total_amount numeric(10,2) not null,
   currency text not null default 'EUR',
-  payment_method text not null default 'cod' check (payment_method in ('cod', 'paypal')),
+  payment_method text not null default 'cod' check (payment_method in ('cod', 'paypal', 'mollie')),
   payment_status text not null default 'pending',
   payment_reference text,
   shipping_country text not null default 'NL',
@@ -123,6 +123,8 @@ alter table public.products add column if not exists rating numeric(2,1) not nul
 alter table public.products add column if not exists sold_count int not null default 0;
 alter table public.products add column if not exists tags text[] not null default '{}';
 alter table public.orders add column if not exists payment_method text not null default 'cod';
+alter table public.orders drop constraint if exists orders_payment_method_check;
+alter table public.orders add constraint orders_payment_method_check check (payment_method in ('cod', 'paypal', 'mollie'));
 alter table public.orders add column if not exists payment_status text not null default 'pending';
 alter table public.orders add column if not exists payment_reference text;
 alter table public.orders add column if not exists shipping_country text not null default 'NL';

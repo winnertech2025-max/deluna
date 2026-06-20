@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import {
   FiArrowRight,
   FiCheckCircle,
@@ -9,7 +10,6 @@ import {
   FiHeadphones,
   FiImage,
   FiShield,
-  FiShoppingBag,
   FiStar,
   FiTruck
 } from "react-icons/fi";
@@ -20,12 +20,21 @@ import { categoryMenu } from "@/lib/category-menu";
 import { products } from "@/lib/products";
 
 const categoryImages = [
-  "https://img.kwcdn.com/product/fancy/492fe046-85ec-438f-915b-fa085d70c13e.jpg",
-  "https://img.kwcdn.com/product/fancy/611a2306-7f77-4c8a-a286-4396d3c5513a.jpg",
-  "https://img.kwcdn.com/product/fancy/c9ccce5b-0f1b-4b37-89d7-67af8ec4b987.jpg",
   "https://img.kwcdn.com/product/fancy/ae505b70-a362-4eac-932c-31b576ce21f0.jpg",
+  "https://img.kwcdn.com/product/fancy/611a2306-7f77-4c8a-a286-4396d3c5513a.jpg",
+  "https://img.kwcdn.com/product/fancy/6d9821d9-9d30-4bf0-b96d-a70fa89d9f7d.jpg",
+  "https://img.kwcdn.com/product/fancy/bf195fa8-a957-4412-b590-5619fe5352b9.jpg",
+  "https://img.kwcdn.com/product/fancy/492fe046-85ec-438f-915b-fa085d70c13e.jpg",
   "https://img.kwcdn.com/product/fancy/debd2e53-18d8-429d-9f1a-953c731b99d6.jpg",
-  "https://img.kwcdn.com/product/fancy/6d9821d9-9d30-4bf0-b96d-a70fa89d9f7d.jpg"
+  "https://img.kwcdn.com/product/fancy/c9ccce5b-0f1b-4b37-89d7-67af8ec4b987.jpg",
+  "https://img.kwcdn.com/product/fancy/45399aff-9fb5-46fc-a16c-581df9e9270c.jpg"
+];
+
+const heroSlides = [
+  "/images/bannerhero.png",
+  "/images/herobanner2.png",
+  "/images/herobanner3.png"
+
 ];
 
 const copy = {
@@ -42,48 +51,39 @@ const copy = {
       ["Verzending door heel Europa", FiTruck],
       ["Klantenservice in Nederland", FiHeadphones]
     ],
-    trust: [
-      ["Gratis verzending", "Vanaf EUR 49", FiTruck],
+    categoryLabels: ["Tote bags", "T-shirts", "Mokken", "Caps", "Waterflessen", "Sieraden", "Accessoires", "Nieuw"],
+    categorySlugs: ["bags", "clothing", "gifts", "hats", "accessories", "jewelry", "accessories", "gifts"],
+    promos: [
+      ["Voor oranje fans", "Draag je trots. Personaliseer je passie.", "Shop nu"],
+      ["Voor elk moment", "Cadeaus die persoonlijk voelen. Elke keer opnieuw.", "Ontdek gifts"],
+      ["Voor wie je liefhebt", "Van kleine verrassing naar grote herinnering.", "Voor familie"]
+    ],
+    productsEyebrow: "Trending right now",
+    productsTitle: "Onze meest geliefde gepersonaliseerde gifts",
+    viewAll: "Bekijk alle producten",
+    whyEyebrow: "Waarom Deluna?",
+    whyTitle: "Meer dan een gift. Het is hun verhaal.",
+    whyItems: [
+      ["Gepersonaliseerd", "Precies zoals jij het wilt", FiEdit3],
+      ["Premium kwaliteit", "Gemaakt om cadeau te geven", FiGift],
+      ["Snelle levering", "Door NL en Europa", FiTruck],
       ["Veilig betalen", "iDEAL, PayPal en kaart", FiShield],
-      ["Vooraf bekijken", "AI preview voor productie", FiImage],
-      ["Gift-ready", "Persoonlijk en netjes afgewerkt", FiGift]
+      ["Gratis AI preview", "Bekijk voor productie", FiImage]
     ],
-    categoriesEyebrow: "Curated collections",
-    categoriesTitle: "Kies op gevoel, niet uit eindeloze lijsten.",
-    categoriesBody: "Deluna groepeert gepersonaliseerde items rond momenten: iets om te dragen, iets om te geven, iets om te bewaren.",
-    viewCategory: "Ontdek",
-    previewEyebrow: "De Deluna manier",
-    previewTitle: "Persoonlijk maken zonder gedoe.",
-    previewBody: "Een rustige flow voor klanten die snel willen zien wat mogelijk is: product kiezen, naam toevoegen, preview controleren en bestellen.",
-    previewPoints: ["Kies een stijl die bij het moment past", "Voeg naam, datum of initialen toe", "Controleer de details voor productie"],
-    bestEyebrow: "Meest gekozen",
-    bestTitle: "Populaire keuzes voor een persoonlijk cadeau.",
-    occasionsEyebrow: "Gift guide",
-    occasionsTitle: "Een item dat past bij de persoon voor wie je koopt.",
-    occasions: ["Voor haar", "Voor hem", "Voor kinderen", "Voor huis", "Voor huisdieren", "Voor feestdagen"],
-    worldCupEyebrow: "Oranje collectie",
-    worldCupTitle: "Maak je WK-moment persoonlijk.",
-    worldCupBody: "Van shirts met naam tot tassen, caps en kleine cadeaus: geef de oranje zomer een detail dat echt van jou is.",
-    worldCupCta: "Shop oranje items",
-    worldCupHighlights: ["Naam of rugnummer", "Voor fans en families", "Perfect als wedstrijddag cadeau"],
-    stepsEyebrow: "Zo werkt het",
-    stepsTitle: "Van idee naar persoonlijk item in vier duidelijke stappen.",
-    steps: [
-      ["Kies je product", "Begin met een item dat past bij jouw moment."],
-      ["Voeg je naam toe", "Selecteer tekst, font, kleur en positie."],
-      ["Bekijk de preview", "Controleer hoe het product eruit kan zien."],
-      ["Plaats je bestelling", "Wij maken het speciaal en leveren aan huis."]
-    ],
-    reviewsEyebrow: "Vertrouwen",
-    reviewsTitle: "Een boutique gevoel, met de duidelijkheid van een moderne webshop.",
+    reviewsEyebrow: "Geliefd door klanten",
+    reviewsTitle: "Echte mensen. Echte verhalen.",
     reviews: [
-      ["Lisa uit Amsterdam", "De preview gaf meteen vertrouwen. Het cadeau voelde echt persoonlijk."],
-      ["Noor uit Utrecht", "Heel makkelijk te bestellen, ook op mobiel. Mooi rustig design."],
-      ["Sophie uit Rotterdam", "Perfect voor een last-minute cadeau dat toch doordacht voelt."]
+      ["Lisa, Amsterdam", "De AI preview maakte het cadeau direct tastbaar. Super persoonlijk."],
+      ["Mark, Rotterdam", "Snel besteld, mooi verpakt en precies zoals verwacht."],
+      ["Sanne, Utrecht", "De naam en kleur klopten helemaal. Zeker een aanrader."]
     ],
-    finalTitle: "Maak vandaag iets dat niemand anders heeft.",
-    finalBody: "Begin met een collectie, voeg jouw detail toe en bestel met vertrouwen.",
-    finalCta: "Begin met personaliseren"
+    inspireEyebrow: "Get inspired",
+    inspireTitle: "Zo personaliseert onze community het leven",
+    instagram: "Bekijk op Instagram",
+    newsletterTitle: "Plaats uw eerste bestelling",
+    newsletterBody: "Meld je aan voor sweet deals en gift ideas.",
+    newsletterPlaceholder: "Vul je e-mail in",
+    newsletterButton: "Aanmelden"
   },
   en: {
     heroBadge: "Personalize for World Cup 2026",
@@ -98,64 +98,82 @@ const copy = {
       ["Shipping across Europe", FiTruck],
       ["Customer support in the Netherlands", FiHeadphones]
     ],
-    trust: [
-      ["Free shipping", "From EUR 49", FiTruck],
-      ["Secure checkout", "iDEAL, PayPal and card", FiShield],
-      ["Preview first", "AI preview before production", FiImage],
-      ["Gift-ready", "Personal and neatly finished", FiGift]
+    categoryLabels: ["Tote bags", "T-shirts", "Mugs", "Caps", "Water bottles", "Jewelry", "Accessories", "New in"],
+    categorySlugs: ["bags", "clothing", "gifts", "hats", "accessories", "jewelry", "accessories", "gifts"],
+    promos: [
+      ["For orange fans", "Wear your pride. Personalize your passion.", "Shop now"],
+      ["For every occasion", "Gifts that feel personal. Every single time.", "Explore gifts"],
+      ["For the ones you love", "From small surprise to big memories.", "For family"]
     ],
-    categoriesEyebrow: "Curated collections",
-    categoriesTitle: "Shop by feeling, not endless lists.",
-    categoriesBody: "Deluna groups personalized items around moments: something to wear, something to gift, something to keep.",
-    viewCategory: "Explore",
-    previewEyebrow: "The Deluna way",
-    previewTitle: "Personalization without friction.",
-    previewBody: "A calm flow for customers who want to see what is possible fast: choose a product, add a name, check the preview and order.",
-    previewPoints: ["Choose a style that fits the moment", "Add a name, date or initials", "Review the details before production"],
-    bestEyebrow: "Most loved",
-    bestTitle: "Popular choices for a personal gift.",
-    occasionsEyebrow: "Gift guide",
-    occasionsTitle: "An item that fits the person you are buying for.",
-    occasions: ["For her", "For him", "For kids", "For home", "For pets", "For holidays"],
-    worldCupEyebrow: "Orange collection",
-    worldCupTitle: "Make your World Cup moment personal.",
-    worldCupBody: "From name shirts to bags, caps and small gifts: give the orange summer a detail that feels truly yours.",
-    worldCupCta: "Shop orange items",
-    worldCupHighlights: ["Name or jersey number", "For fans and families", "Perfect as a match-day gift"],
-    stepsEyebrow: "How it works",
-    stepsTitle: "From idea to personal item in four clear steps.",
-    steps: [
-      ["Choose your product", "Start with an item that fits the occasion."],
-      ["Add your name", "Select text, font, color and placement."],
-      ["Preview the result", "Check how the product can look."],
-      ["Place your order", "We make it special and deliver it home."]
+    productsEyebrow: "Trending right now",
+    productsTitle: "Our most loved personalised gifts",
+    viewAll: "View all products",
+    whyEyebrow: "Why Deluna?",
+    whyTitle: "More than a gift. It is their story.",
+    whyItems: [
+      ["Personalised", "Just the way you want it", FiEdit3],
+      ["Premium quality", "Made to last, made to love", FiGift],
+      ["Fast delivery", "Shipped across NL and EU", FiTruck],
+      ["Safe checkout", "iDEAL, PayPal and card", FiShield],
+      ["Free AI preview", "See it before production", FiImage]
     ],
-    reviewsEyebrow: "Trust",
-    reviewsTitle: "A boutique feeling with the clarity of a modern webshop.",
+    reviewsEyebrow: "Loved by customers",
+    reviewsTitle: "Real people. Real stories.",
     reviews: [
-      ["Lisa from Amsterdam", "The preview gave me confidence right away. The gift felt truly personal."],
-      ["Noor from Utrecht", "Very easy to order, even on mobile. Beautiful and calm design."],
-      ["Sophie from Rotterdam", "Perfect for a last-minute gift that still feels thoughtful."]
+      ["Lisa, Amsterdam", "The AI preview made the gift feel real immediately. So personal."],
+      ["Mark, Rotterdam", "Easy to order, beautifully packed and exactly as expected."],
+      ["Sanne, Utrecht", "The name and color were perfect. Definitely recommended."]
     ],
-    finalTitle: "Make something no one else has.",
-    finalBody: "Start with a collection, add your detail and order with confidence.",
-    finalCta: "Start personalizing"
+    inspireEyebrow: "Get inspired",
+    inspireTitle: "See how our community personalises life",
+    instagram: "View on Instagram",
+    newsletterTitle: "Start your first order",
+    newsletterBody: "Sign up for sweet deals and gift ideas.",
+    newsletterPlaceholder: "Enter your email",
+    newsletterButton: "Sign me up"
   }
 };
 
 export default function HomePage() {
   const { locale } = useLanguage();
   const c = copy[locale];
-  const bestSellers = products.filter((product) => product.isBestSeller).slice(0, 4);
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+  const bestSellers = products.filter((product) => product.isBestSeller).slice(0, 6);
+  const galleryProducts = products.slice(6, 13);
   const heroTitleClass =
     locale === "nl"
-      ? "max-w-[640px] font-serif text-[2.28rem] font-bold leading-[1.08] tracking-normal text-[#211811] sm:text-[2.7rem] lg:text-[2.55rem] xl:text-[3rem] 2xl:text-[3.35rem]"
-      : "max-w-[610px] font-serif text-[2.35rem] font-bold leading-[1.08] tracking-normal text-[#211811] sm:text-[2.9rem] lg:text-[2.8rem] xl:text-[3.25rem] 2xl:text-[3.55rem]";
+      ? "max-w-[650px] font-serif text-[2.55rem] font-bold leading-[1.02] tracking-normal text-[#211811] sm:text-[3.25rem] lg:text-[3.25rem] xl:text-[3.0rem]"
+      : "max-w-[620px] font-serif text-[2.65rem] font-bold leading-[1.02] tracking-normal text-[#211811] sm:text-[3.35rem] lg:text-[3.35rem] xl:text-[3.0rem]";
+  const previewSteps =
+    locale === "nl"
+      ? [
+          ["Typ de naam", "Kies tekst, font, kleur en plaatsing."],
+          ["Bekijk de preview", "Laat AI een eerste visuele indruk maken."],
+          ["Bestel met vertrouwen", "Wij bewaren de gekozen personalisatie bij je order."]
+        ]
+      : [
+          ["Type the name", "Choose text, font, color and placement."],
+          ["See the preview", "Let AI create a first visual impression."],
+          ["Order with confidence", "We save the chosen personalization with your order."]
+        ];
+  const campaignProducts =
+    locale === "nl"
+      ? ["Naamshirt", "Oranje cap", "Team tote", "Fan mok"]
+      : ["Name shirt", "Orange cap", "Team tote", "Fan mug"];
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveHeroSlide((current) => (current + 1) % heroSlides.length);
+    }, 4000);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   return (
-    <div className="bg-white">
+    <div className="bg-white text-[#211811]">
+      {/* HERO SECTION - UNCHANGED */}
       <section className="relative overflow-hidden bg-[#fff8f0]">
-        <div className="grid min-h-[650px] lg:grid-cols-[43%_57%]">
+        <div className="grid lg:min-h-[650px] lg:grid-cols-[43%_57%]">
           <div className="relative z-10 flex flex-col justify-center overflow-hidden bg-[#fff8f0] px-5 py-14 sm:px-9 lg:pl-20 lg:pr-12 xl:pl-28 xl:pr-14 2xl:pl-36 2xl:pr-16">
             <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-orange-100 bg-white px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-cocoa shadow-sm">
               <FiStar className="text-orange-500" />
@@ -164,22 +182,22 @@ export default function HomePage() {
 
             <h1 className={heroTitleClass}>
               {c.heroTitle.map((line) => (
-                <span key={line} className="block text-[#211811]">
+                <span key={line} className="block">
                   {line}
                   <span className="text-orange-500">.</span>
                 </span>
               ))}
             </h1>
 
-            <p className="mt-6 max-w-[510px] text-base leading-7 text-cocoa sm:text-lg">{c.heroBody}</p>
+            <p className="mt-5 max-w-[510px] text-sm leading-7 text-cocoa sm:mt-6 sm:text-base">{c.heroBody}</p>
 
-            <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {c.perks.map(([label, Icon]) => (
-                <div key={label as string} className="rounded-lg border border-orange-100 bg-white/75 p-3 text-center shadow-sm">
-                  <span className="mx-auto mb-2 grid h-10 w-10 place-items-center rounded-full bg-white text-orange-600 shadow-sm">
-                    <Icon size={19} />
+                <div key={label as string} className="group rounded-2xl border-2 border-orange-100 bg-gradient-to-br from-white to-orange-50/50 p-4 sm:p-5 text-center shadow-md hover:shadow-lg hover:border-orange-300 hover:-translate-y-1 transition-all duration-300">
+                  <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600 shadow-md group-hover:scale-110 transition-transform duration-300 ring-1 ring-orange-200">
+                    <Icon size={22} />
                   </span>
-                  <p className="text-[11px] font-semibold leading-5 text-ink">{String(label)}</p>
+                  <p className="text-[10px] sm:text-xs font-bold leading-5 text-[#211811] group-hover:text-orange-700 transition-colors">{String(label)}</p>
                 </div>
               ))}
             </div>
@@ -212,9 +230,20 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative min-h-[420px] overflow-hidden lg:min-h-[650px]">
+          <div className="relative min-h-[340px] overflow-hidden sm:min-h-[440px] lg:min-h-[650px]">
             <div className="absolute inset-y-0 -left-28 right-0">
-              <Image src="/images/bannerhero.png" alt="Deluna personalized gifts" fill priority className="object-cover object-center" />
+              {heroSlides.map((slide, index) => (
+                <Image
+                  key={slide}
+                  src={slide}
+                  alt="Deluna personalized gifts"
+                  fill
+                  priority={index === 0}
+                  className={`object-cover object-center transition-opacity duration-1000 ${
+                    activeHeroSlide === index ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              ))}
               <div className="absolute inset-0 bg-gradient-to-r from-[#fff8f0] via-transparent to-transparent lg:hidden" />
             </div>
             <svg
@@ -232,174 +261,382 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#15110e]">
-        <div className="mx-auto grid max-w-[1536px] grid-cols-2 divide-x divide-white/10 px-4 sm:grid-cols-4 sm:px-8">
-          {c.trust.map(([title, subtitle, Icon]) => (
-            <div key={title as string} className="flex items-center gap-3 px-2 py-5 text-white sm:px-6">
-              <Icon className="shrink-0 text-orange-400" size={22} />
-              <div>
-                <p className="text-sm font-bold">{String(title)}</p>
-                <p className="text-xs text-white/55">{String(subtitle)}</p>
+      {/* CATEGORIES SECTION - REFINED */}
+      <section className="relative z-0 overflow-hidden bg-white px-4 pb-10 pt-8 sm:px-6">
+        <div className="mx-auto w-full max-w-[1420px] overflow-hidden">
+          <div className="grid min-w-0 grid-cols-2 gap-2.5 sm:grid-cols-4 xl:grid-cols-8 sm:gap-3">
+            {c.categoryLabels.map((label, index) => {
+              const Icon = categoryMenu[index % categoryMenu.length].icon;
+              const bgImage = categoryImages[index];
+              return (
+                <a
+                  key={`${label}-${index}`}
+                  href={`/shop?category=${c.categorySlugs[index]}`}
+                  className="group relative min-w-0 overflow-hidden rounded-2xl min-h-[110px] sm:min-h-[130px] shadow-md hover:shadow-xl transition-all duration-300"
+                >
+                  <Image
+                    src={bgImage}
+                    alt={label}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/80 transition-all duration-300" />
+                  <div className="relative h-full flex flex-col items-center justify-center gap-2 sm:gap-3 p-3">
+                    <div className="p-2 rounded-full bg-white/95 ring-1 ring-white/50 shadow-md group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="text-orange-600" size={22} />
+                    </div>
+                    <span className="text-[10px] sm:text-xs font-bold text-white drop-shadow-md text-center leading-3 group-hover:text-orange-300 transition-colors duration-300">{label}</span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* PROMOS SECTION - REDESIGNED */}
+      <section className="bg-white py-12 sm:py-16">
+        <div className="mx-auto grid max-w-[1420px] gap-6 px-4 sm:px-6 lg:grid-cols-3">
+          {c.promos.map(([eyebrow, title, cta], index) => (
+            <a 
+              key={title} 
+              href="/shop" 
+              className="group relative min-h-[380px] overflow-hidden rounded-3xl shadow-lg ring-1 ring-orange-100 transition-all duration-500 hover:shadow-2xl hover:ring-orange-200"
+            >
+              <Image 
+                src={index === 0 ? "/images/bannerhero.png" : categoryImages[index + 2]} 
+                alt={title} 
+                fill 
+                className="object-cover transition-transform duration-500 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/0 group-hover:from-black/70 transition-all duration-500" />
+              <div className="relative flex h-full flex-col justify-between p-8">
+                <div className="mt-auto">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-orange-300">{eyebrow}</p>
+                  <h2 className="mt-3 font-serif text-3xl sm:text-4xl font-bold leading-tight text-white drop-shadow-lg">{title}</h2>
+                </div>
+                <span className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border-2 border-white/60 bg-white/15 backdrop-blur-md px-5 py-3 text-xs font-black uppercase tracking-[0.08em] text-white transition-all duration-300 group-hover:bg-white/25 group-hover:border-white">
+                  {cta} <FiArrowRight className="group-hover:translate-x-1 transition-transform" size={16} />
+                </span>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </section>
 
-      <section className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-[1480px] px-4 sm:px-6 xl:px-8">
-          <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
-            <a href="/shop?category=personalized-fashion" className="group relative min-h-[430px] overflow-hidden rounded-lg bg-[#211811] shadow-sm">
-              <Image src="/images/bannerhero.png" alt="World Cup personalized collection" fill className="object-cover transition duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white sm:p-8">
-                <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-200">{c.categoriesEyebrow}</p>
-                <h2 className="mt-3 max-w-lg text-3xl font-black leading-tight sm:text-4xl">{c.categoriesTitle}</h2>
-                <p className="mt-4 max-w-xl leading-7 text-white/80">{c.categoriesBody}</p>
-                <span className="mt-6 inline-flex items-center gap-2 rounded-full bg-orange-600 px-5 py-3 text-sm font-black uppercase tracking-[0.08em] transition group-hover:bg-orange-500">
-                  {c.viewCategory} <FiArrowRight />
-                </span>
+      {/* PRODUCTS SECTION - REDESIGNED */}
+      <section className="bg-gradient-to-b from-white via-orange-50/20 to-white py-16 sm:py-20">
+        <div className="mx-auto max-w-[1420px] px-4 sm:px-6">
+          <div className="mb-12 flex flex-col items-center text-center">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-600">{c.productsEyebrow}</p>
+            <h2 className="mt-3 font-serif text-4xl sm:text-5xl font-bold text-[#211811]">{c.productsTitle}</h2>
+            <div className="mt-6 h-1.5 w-20 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full" />
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 xl:grid-cols-6">
+            {bestSellers.map((product) => (
+              <div key={product.id} className="transition-all duration-300 hover:scale-105">
+                <ProductCard product={product} />
               </div>
+            ))}
+          </div>
+          <div className="mt-12 flex justify-center">
+            <a href="/shop" className="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 text-white text-sm font-black uppercase tracking-[0.08em] rounded-lg hover:bg-orange-700 hover:shadow-lg transition-all duration-300 group">
+              {c.viewAll} <FiArrowRight className="group-hover:translate-x-1 transition-transform" size={16} />
             </a>
-
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {categoryMenu.map((category, index) => {
-                const Icon = category.icon;
-                return (
-                  <a key={category.slug} href={`/shop?category=${category.slug}`} className="group rounded-lg border border-orange-100 bg-[#fff8f0] p-4 transition hover:-translate-y-1 hover:border-orange-300 hover:bg-white hover:shadow-xl">
-                    <div className="relative aspect-square overflow-hidden rounded-md bg-white">
-                      <Image src={categoryImages[index]} alt={category.label} fill className="object-cover transition duration-500 group-hover:scale-105" />
-                    </div>
-                    <div className="mt-4 flex items-start justify-between gap-3">
-                      <div>
-                        <span className="mb-3 grid h-9 w-9 place-items-center rounded-full bg-white text-orange-600 shadow-sm">
-                          <Icon size={17} />
-                        </span>
-                        <h3 className="text-base font-black leading-tight text-[#211811]">{category.label}</h3>
-                      </div>
-                      <FiArrowRight className="mt-1 shrink-0 text-cocoa transition group-hover:translate-x-1 group-hover:text-orange-600" />
-                    </div>
-                  </a>
-                );
-              })}
-            </div>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-orange-100 bg-[#fff8f0] py-16">
-        <div className="mx-auto max-w-[1480px] px-4 sm:px-6 xl:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-orange-600">{c.previewEyebrow}</p>
-              <h2 className="mt-3 max-w-xl text-3xl font-black leading-tight text-[#211811] sm:text-4xl">{c.previewTitle}</h2>
-              <p className="mt-4 max-w-xl leading-7 text-cocoa">{c.previewBody}</p>
+      {/* WORLD CUP CAMPAIGN BOARD */}
+      <section className="bg-[#ffffff] px-4 py-14 sm:px-6 sm:py-20">
+        <div className="relative mx-auto max-w-[1420px] overflow-hidden rounded-[34px] bg-[#12100d] shadow-2xl ring-1 ring-orange-400/25">
+          <Image src="/images/footballbackground.jpg" alt="Football stadium" fill className="object-cover opacity-55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/70 to-black/55" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_34%,rgba(255,115,0,0.42),transparent_34%),radial-gradient(circle_at_12%_88%,rgba(255,93,0,0.28),transparent_30%)]" />
+
+          <div className="relative grid gap-8 p-5 sm:p-8 lg:min-h-[650px] lg:grid-cols-[0.85fr_1.2fr_0.5fr] lg:p-10">
+            <div className="relative hidden min-h-[560px] overflow-hidden rounded-[28px] border border-white/10 bg-white/5 lg:block">
+              <div className="absolute left-5 top-5 z-10 rounded-full border border-orange-300/40 bg-black/40 px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-orange-200 backdrop-blur">
+                Virgil van Dijk
+              </div>
+              <Image src="/images/player.png" alt="Virgil van Dijk" fill className="object-cover object-top opacity-100 mix-blend-lighten" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/45 to-transparent p-6">
+                <p className="text-[5rem] font-black uppercase leading-none tracking-[-0.08em] text-white/10">VVD</p>
+                <p className="-mt-4 text-sm font-black uppercase tracking-[0.18em] text-orange-300">
+                  {locale === "nl" ? "Oranje inspiratie" : "Orange inspiration"}
+                </p>
+              </div>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {c.steps.slice(0, 3).map(([title, body], index) => (
-                <div key={title} className="rounded-lg border border-orange-100 bg-white p-6 shadow-sm">
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-orange-500">0{index + 1}</p>
-                  <h3 className="mt-5 text-xl font-black text-[#211811]">{title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-cocoa">{body}</p>
+
+            <div className="flex flex-col justify-between lg:min-h-[560px]">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-orange-300/40 bg-orange-500/15 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-orange-100 backdrop-blur">
+                  <FiStar className="text-orange-300" />
+                  {locale === "nl" ? "World Cup custom drop" : "World Cup custom drop"}
+                </div>
+                <h2 className="mt-6 max-w-3xl font-serif text-4xl font-bold leading-[0.98] text-white sm:text-5xl xl:text-6xl">
+                  {locale === "nl" ? "Shop samen voor het WK." : "Shop together for the World Cup."}
+                </h2>
+                <p className="mt-5 max-w-xl text-base leading-8 text-white/75">
+                  {locale === "nl"
+                    ? "Maak wedstrijddagen persoonlijk met custom shirts, fan bags, caps, banners en kleine Oranje gifts voor familie en vrienden."
+                    : "Make match days personal with custom shirts, fan bags, caps, banners and small Orange gifts for family and friends."}
+                </p>
+              </div>
+
+              <div className="relative mt-8 grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+                <div className="rounded-[28px] border border-white/10 bg-black/35 p-5 backdrop-blur">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-orange-300">
+                    {locale === "nl" ? "Maak jouw kit" : "Build your kit"}
+                  </p>
+                
+                  <a href="/shop?category=clothing" className="mt-5 inline-flex w-full items-center justify-center gap-1 rounded-2xl bg-orange-600  py-4 text-xs font-black uppercase tracking-[0.1em] text-white transition hover:bg-orange-500">
+                    {locale === "nl" ? "Shop WK collectie" : "Shop World Cup edit"} <FiArrowRight />
+                  </a>
+                </div>
+
+                <div className="relative min-h-[260px] sm:min-h-[340px]">
+                  <div className="absolute inset-x-6 bottom-2 top-10 rounded-full bg-orange-500/25 blur-3xl" />
+                  <Image src="/images/shirtfootball.png" alt="Custom orange football shirt" fill className="object-contain drop-shadow-2xl" />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid content-between gap-3 sm:grid-cols-4 lg:grid-cols-1">
+              {[
+                [locale === "nl" ? "Custom shirts" : "Custom shirts", categoryImages[1]],
+                [locale === "nl" ? "Fan caps" : "Fan caps", categoryImages[3]],
+                [locale === "nl" ? "Banners" : "Banners", categoryImages[6]],
+                [locale === "nl" ? "Gift bags" : "Gift bags", categoryImages[0]]
+              ].map(([title, image]) => (
+                <a key={title} href="/shop?category=clothing" className="group overflow-hidden rounded-2xl border border-white/10 bg-white/10 p-2 backdrop-blur transition hover:bg-white/15">
+                  <div className="relative h-28 overflow-hidden rounded-xl">
+                    <Image src={image} alt={title} fill className="object-cover transition duration-500 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <p className="absolute bottom-3 left-3 text-xs font-black uppercase tracking-[0.12em] text-white">{title}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative border-t border-white/10 bg-black/35 px-5 py-4 sm:px-8">
+            <div className="grid gap-3 sm:grid-cols-4">
+              {[
+                locale === "nl" ? "Gratis AI preview voor productie" : "Free AI preview before production",
+                locale === "nl" ? "Naam en nummer personalisatie" : "Name and number personalization",
+                locale === "nl" ? "Fan items voor familie en teams" : "Fan items for families and teams",
+                locale === "nl" ? "Verzending door NL en EU" : "Shipping across NL and EU"
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-full bg-white/10 px-4 py-3 text-xs font-bold text-white/85">
+                  <FiCheckCircle className="shrink-0 text-orange-300" />
+                  {item}
                 </div>
               ))}
             </div>
           </div>
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            {c.previewPoints.map((point) => (
-              <p key={point} className="flex items-center gap-3 rounded-full bg-white px-4 py-3 text-sm font-bold text-[#211811] shadow-sm">
-                <FiCheckCircle className="shrink-0 text-orange-500" /> {point}
-              </p>
-            ))}
-          </div>
         </div>
       </section>
 
+      {/* REVIEWS SECTION - REDESIGNED */}
       <section className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-[1480px] px-4 sm:px-6 xl:px-8">
-          <div className="mb-8 flex items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-orange-600">{c.bestEyebrow}</p>
-              <h2 className="mt-3 text-3xl font-black text-[#211811] sm:text-4xl">{c.bestTitle}</h2>
-            </div>
-            <a href="/shop?best=1" className="hidden items-center gap-2 text-sm font-black text-orange-600 sm:flex">
-              Shop <FiArrowRight />
-            </a>
+        <div className="mx-auto max-w-[1420px] px-4 sm:px-6">
+          <div className="mb-12 flex flex-col items-center text-center">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-600">{c.reviewsEyebrow}</p>
+            <h2 className="mt-3 font-serif text-4xl sm:text-5xl font-bold text-[#211811]">{c.reviewsTitle}</h2>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-            {bestSellers.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#fff8f0] py-16 sm:py-20">
-        <div className="mx-auto max-w-[1480px] px-4 sm:px-6 xl:px-8">
-          <div className="grid overflow-hidden rounded-xl border border-orange-100 bg-white shadow-sm lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="relative min-h-[360px]">
-              <Image src="/images/bannerhero.png" alt="Orange World Cup personalized gifts" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-200">{c.worldCupEyebrow}</p>
-                <h2 className="mt-3 max-w-xl text-3xl font-black leading-tight sm:text-4xl">{c.worldCupTitle}</h2>
-              </div>
-            </div>
-            <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-              <p className="max-w-2xl text-lg leading-8 text-cocoa">{c.worldCupBody}</p>
-              <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                {c.worldCupHighlights.map((item) => (
-                  <div key={item} className="rounded-lg border border-orange-100 bg-[#fff8f0] p-4 text-sm font-bold text-ink">
-                    <FiCheckCircle className="mb-3 text-orange-500" />
-                    {item}
-                  </div>
-                ))}
-              </div>
-              <LinkButton href="/shop?category=personalized-fashion" className="mt-8 w-fit bg-orange-600 text-white hover:bg-orange-700">
-                {c.worldCupCta} <FiArrowRight />
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-orange-100 bg-[#fff8f0] py-16">
-        <div className="mx-auto grid max-w-[1480px] gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center xl:px-8">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.24em] text-orange-600">{c.reviewsEyebrow}</p>
-            <h2 className="mt-3 max-w-2xl text-3xl font-black leading-tight text-[#211811] sm:text-4xl">{c.reviewsTitle}</h2>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_0.85fr]">
             {c.reviews.map(([name, text], index) => (
-              <div key={name} className="rounded-lg border border-orange-100 bg-white p-5 shadow-sm">
-                <div className="mb-4 flex text-orange-400">
+              <div key={name} className="group rounded-2xl bg-gradient-to-br from-orange-50 to-white p-6 shadow-md hover:shadow-xl ring-1 ring-orange-100 group-hover:ring-orange-300 transition-all duration-300 hover:-translate-y-1">
+                <div className="mb-4 flex gap-1">
                   {[0, 1, 2, 3, 4].map((star) => (
-                    <FiStar key={star} fill="currentColor" />
+                    <FiStar key={star} fill="currentColor" className="text-orange-500" size={16} />
                   ))}
                 </div>
-                <p className="text-sm leading-6 text-[#211811]">"{text}"</p>
-                <div className="mt-5 flex items-center gap-3 border-t border-black/5 pt-4">
+                <p className="text-sm leading-7 text-[#211811] font-medium">"{text}"</p>
+                <div className="mt-6 flex items-center gap-3 border-t border-orange-100 pt-4">
                   <span
-                    className="h-9 w-9 rounded-full bg-orange-100 bg-cover"
+                    className="h-10 w-10 rounded-full bg-orange-100 bg-cover ring-2 ring-orange-200"
                     style={{ backgroundImage: `url(https://i.pravatar.cc/64?img=${index + 22})` }}
                   />
-                  <p className="text-sm font-bold text-cocoa">{name}</p>
+                  <p className="text-xs font-black text-[#211811]">{name}</p>
                 </div>
               </div>
+            ))}
+            <div className="flex flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 p-6 text-center ring-2 ring-orange-300 shadow-md">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-orange-700">Excellent</p>
+              <div className="mt-4 flex gap-1">
+                {[0, 1, 2, 3, 4].map((star) => (
+                  <FiStar key={star} fill="currentColor" className="text-orange-500" size={18} />
+                ))}
+              </div>
+              <p className="mt-4 text-4xl font-black text-orange-700">4.9</p>
+              <p className="mt-1 text-xs text-orange-600">/5 stars</p>
+              <p className="mt-3 text-xs text-orange-600 font-semibold">2,430 reviews</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* GALLERY SECTION - REDESIGNED */}
+      <section className="bg-gradient-to-b from-white to-orange-50/30 py-16 sm:py-20">
+        <div className="mx-auto max-w-[1420px] px-4 sm:px-6">
+          <div className="mb-12 flex flex-col items-center text-center">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-600">{c.inspireEyebrow}</p>
+            <h2 className="mt-3 font-serif text-4xl sm:text-5xl font-bold text-[#211811]">{c.inspireTitle}</h2>
+            <div className="mt-6 h-1.5 w-20 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full mx-auto" />
+          </div>
+          <div className="flex items-center justify-center mb-8">
+            <a href="/shop" className="hidden rounded-lg border border-orange-300 bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.12em] text-orange-700 hover:border-orange-500 hover:bg-orange-50 sm:inline-flex group">
+              {c.instagram} <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
+          <div className="grid grid-cols-2 gap-4 min-[420px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-7">
+            {galleryProducts.map((product) => (
+              <a 
+                key={product.id} 
+                href={`/product/${product.slug}`} 
+                className="group relative aspect-square overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-orange-100 transition-all duration-300 hover:shadow-xl hover:ring-orange-300"
+              >
+                <Image 
+                  src={product.image} 
+                  alt={product.name} 
+                  fill 
+                  className="object-cover transition-transform duration-500 group-hover:scale-125" 
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              </a>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-orange-600 py-14">
-        <div className="mx-auto flex max-w-[1480px] flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between xl:px-8">
-          <div>
-            <h2 className="text-3xl font-black text-white sm:text-4xl">{c.finalTitle}</h2>
-            <p className="mt-2 max-w-2xl text-orange-50">{c.finalBody}</p>
+      {/* AI PREVIEW STUDIO */}
+      {/* <section className="border-t border-orange-100 bg-white py-16 sm:py-20">
+        <div className="mx-auto grid max-w-[1420px] gap-8 px-4 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+          <div className="relative overflow-hidden rounded-[34px] bg-[#211811] p-4 shadow-2xl">
+            <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
+              <div className="relative min-h-[420px] overflow-hidden rounded-[26px]">
+                <Image src={categoryImages[5]} alt="AI preview example" fill className="object-cover" />
+                <div className="absolute inset-x-8 bottom-10 rounded-full bg-white/90 px-8 py-4 text-center shadow-xl backdrop-blur">
+                  <span className="font-serif text-4xl font-bold text-orange-600">Luna</span>
+                </div>
+              </div>
+              <div className="rounded-[26px] bg-white p-7">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-orange-600">AI preview</p>
+                <h3 className="mt-4 font-serif text-3xl font-bold leading-tight text-[#211811]">
+                  {locale === "nl" ? "Laat klanten kijken voordat wij maken." : "Let customers see it before we make it."}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-cocoa">
+                  {locale === "nl"
+                    ? "De preview helpt klanten hun naam, kleur en gevoel te controleren voordat het product naar productie gaat."
+                    : "The preview helps customers check the name, color and feeling before the product goes into production."}
+                </p>
+              </div>
+            </div>
           </div>
-          <LinkButton href="/shop" className="min-h-14 rounded-[6px] bg-white px-8 text-sm font-black uppercase tracking-[0.08em] text-orange-600 hover:bg-orange-50">
-            {c.finalCta} <FiShoppingBag />
-          </LinkButton>
+
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-600">
+              {locale === "nl" ? "Gratis preview studio" : "Free preview studio"}
+            </p>
+            <h2 className="mt-3 max-w-xl font-serif text-4xl font-bold leading-tight text-[#211811] sm:text-5xl">
+              {locale === "nl" ? "Minder twijfel bij custom producten." : "Less doubt for custom products."}
+            </h2>
+            <p className="mt-5 max-w-xl text-base leading-8 text-cocoa">
+              {locale === "nl"
+                ? "Personaliseren voelt spannend. Daarom maakt Deluna het aankoopmoment visueel, rustig en duidelijk."
+                : "Personalization can feel uncertain. Deluna makes the buying moment visual, calm and clear."}
+            </p>
+            <div className="mt-8 space-y-3">
+              {previewSteps.map(([title, body]) => (
+                <div key={title} className="flex gap-4 rounded-2xl border border-orange-100 bg-[#fff8f0] p-5">
+                  <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white text-orange-600 shadow-sm">
+                    <FiCheckCircle />
+                  </span>
+                  <div>
+                    <h3 className="text-sm font-black text-[#211811]">{title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-cocoa">{body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section> */}
+
+      {/* ORANJE MATCHDAY EDIT */}
+      <section className="relative overflow-hidden bg-[#18100b] py-16 text-white sm:py-20">
+        <div className="absolute inset-0 opacity-40">
+          <Image src="/images/bannerhero.png" alt="Oranje personalized products" fill className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#18100b] via-[#18100b]/88 to-[#18100b]/45" />
+        </div>
+        <div className="relative mx-auto grid max-w-[1420px] gap-10 px-4 sm:px-6 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-300">
+              {locale === "nl" ? "Oranje edit" : "Orange edit"}
+            </p>
+            <h2 className="mt-3 max-w-xl font-serif text-4xl font-bold leading-tight sm:text-5xl">
+              {locale === "nl" ? "Gemaakt voor fans die hun naam willen dragen." : "Made for fans who want to wear their name."}
+            </h2>
+            <p className="mt-5 max-w-xl text-base leading-8 text-white/75">
+              {locale === "nl"
+                ? "Een compacte WK-selectie met items voor wedstrijddagen, watch parties en kleine cadeaus."
+                : "A compact World Cup selection for match days, watch parties and small gifts."}
+            </p>
+            <a href="/shop?category=clothing" className="mt-8 inline-flex items-center gap-2 rounded-full bg-orange-600 px-7 py-4 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-orange-500">
+              {locale === "nl" ? "Shop oranje items" : "Shop orange items"} <FiArrowRight />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {campaignProducts.map((product, index) => (
+              <a key={product} href="/shop?category=clothing" className="group rounded-[26px] border border-white/10 bg-white/10 p-3 backdrop-blur transition hover:-translate-y-1 hover:bg-white/15">
+                <div className="relative aspect-square overflow-hidden rounded-[20px] bg-orange-100">
+                  <Image src={index % 2 === 0 ? categoryImages[1] : categoryImages[3]} alt={product} fill className="object-cover transition duration-500 group-hover:scale-110" />
+                </div>
+                <div className="flex items-center justify-between px-1 py-4">
+                  <span className="text-sm font-black">{product}</span>
+                  <FiArrowRight className="text-orange-300 transition group-hover:translate-x-1" />
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* NEWSLETTER SECTION - WITH BACKGROUND IMAGE */}
+      <section className="relative py-16 sm:py-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image 
+            src="/images/herobanner2.png" 
+            alt="Newsletter background" 
+            fill 
+            className="object-cover" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600/85 to-orange-500/75" />
+        </div>
+        
+        <div className="mx-auto max-w-[1420px] px-4 sm:px-6 relative z-10">
+          <div className="max-w-2xl">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-100">Newsletter</p>
+            <h2 className="mt-3 font-serif text-3xl sm:text-4xl font-bold text-white leading-tight">{c.newsletterTitle}</h2>
+            <p className="mt-3 text-white/90 text-sm sm:text-base">{c.newsletterBody}</p>
+            
+            <form className="mt-6 flex flex-col sm:flex-row gap-3">
+              <input 
+                className="flex-1 px-4 sm:px-5 py-3 sm:py-4 rounded-lg border-2 border-white/30 bg-white/10 backdrop-blur-sm text-white placeholder-white/60 text-sm outline-none transition-all duration-300 focus:border-white focus:bg-white/20" 
+                placeholder={c.newsletterPlaceholder} 
+                type="email" 
+              />
+              <button 
+                className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-orange-600 font-black uppercase tracking-[0.08em] rounded-lg hover:bg-orange-50 hover:shadow-xl transition-all duration-300 flex-shrink-0" 
+                type="button"
+              >
+                {c.newsletterButton}
+              </button>
+            </form>
+          </div>
         </div>
       </section>
     </div>

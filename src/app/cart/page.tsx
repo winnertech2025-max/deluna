@@ -29,17 +29,17 @@ export default function CartPage() {
           <LinkButton href="/shop" className="mt-5">Start customizing</LinkButton>
         </div>
       ) : (
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-4">
             {items.map((item, index) => {
               const variant = item.product.variants.find((candidate) => candidate.id === item.variantId);
               return (
-                <div key={`${item.product.id}-${index}`} className="grid gap-4 rounded-lg border border-orange-100 bg-white p-4 shadow-sm sm:grid-cols-[120px_1fr_auto]">
+                <div key={`${item.product.id}-${index}`} className="grid gap-4 rounded-lg border border-orange-100 bg-white p-4 shadow-sm sm:grid-cols-[120px_minmax(0,1fr)_auto]">
                   <div className="relative aspect-square overflow-hidden rounded-md bg-linen">
                     <Image src={item.product.image} alt={item.product.name} fill className="object-cover" />
                   </div>
-                  <div>
-                    <h2 className="font-semibold text-ink">{item.product.name}</h2>
+                  <div className="min-w-0">
+                    <h2 className="break-words font-semibold text-ink">{item.product.name}</h2>
                     <p className="mt-1 text-sm text-cocoa">{variant?.name} · Qty {item.quantity}</p>
                     <p className="mt-3 text-sm text-cocoa">Text: <b>{item.engravingText}</b></p>
                     <p className="text-sm text-cocoa">Font: {item.font} · Color: {item.color}</p>
@@ -56,9 +56,9 @@ export default function CartPage() {
           </div>
           <aside className="h-fit rounded-lg border border-orange-200 bg-white p-5 shadow-sm lg:sticky lg:top-28">
             <p className="text-sm font-semibold uppercase tracking-wide text-cocoa">Order summary</p>
-            <div className="mt-5 flex justify-between text-lg font-bold">
+            <div className="mt-5 flex justify-between gap-4 text-lg font-bold">
               <span>Total</span>
-              <span>{formatEUR(cartTotal(items))}</span>
+              <span className="shrink-0">{formatEUR(cartTotal(items))}</span>
             </div>
             <p className="mt-3 text-sm leading-6 text-cocoa">You will confirm personalization details before production.</p>
             <LinkButton href="/checkout" className="mt-5 w-full">Continue to checkout</LinkButton>

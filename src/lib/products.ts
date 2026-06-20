@@ -153,6 +153,7 @@ export const products: Product[] = seedProducts.map((item, index) => {
     image: item.image,
     gallery: [item.image],
     basePrice: item.price,
+    price: item.price,
     currency: "EUR",
     status: "active",
     isBestSeller: index < 8 || ["kids", "bags"].includes(item.category),

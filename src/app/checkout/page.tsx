@@ -82,7 +82,12 @@ export default function CheckoutPage() {
           PayPal payment was cancelled. Your cart is still here, so you can try again or choose another payment method.
         </div>
       ) : null}
-      <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_360px] lg:gap-6">
+      {search.get("mollie") === "cancelled" ? (
+        <div className="mt-5 rounded-lg border border-orange-200 bg-orange-50 p-4 text-sm font-semibold text-orange-900">
+          Mollie payment was not completed. Your cart is still here, so you can try again or choose another payment method.
+        </div>
+      ) : null}
+      <div className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6">
         <form action={submit} className="rounded-lg border border-orange-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="text-sm font-semibold text-ink">Full name<input name="name" required className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>
@@ -129,32 +134,36 @@ export default function CheckoutPage() {
               <input type="radio" name="paymentMethod" value="paypal" />
               <span><b>PayPal</b> - Pay now securely with PayPal</span>
             </label>
+            <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-md bg-white p-3 ring-1 ring-orange-100">
+              <input type="radio" name="paymentMethod" value="mollie" />
+              <span><b>Mollie</b> - iDEAL, cards and European payment methods</span>
+            </label>
           </fieldset>
           <Button disabled={loading || items.length === 0} className="mt-6 w-full">
             {loading ? "Creating order..." : "Confirm order"}
           </Button>
         </form>
-        <aside className="h-fit rounded-lg bg-ink p-5 text-white lg:sticky lg:top-28">
+        <aside className="h-fit min-w-0 rounded-lg bg-ink p-5 text-white lg:sticky lg:top-28">
           <p className="font-semibold">Review</p>
           <div className="mt-4 space-y-3">
             {items.map((item, index) => (
               <div key={`${item.product.id}-${index}`} className="border-b border-white/10 pb-3 text-sm">
-                <p className="font-semibold">{item.product.name}</p>
-                <p className="text-white/70">Engraving: {item.engravingText}</p>
+                <p className="break-words font-semibold">{item.product.name}</p>
+                <p className="break-words text-white/70">Engraving: {item.engravingText}</p>
               </div>
             ))}
           </div>
           <div className="mt-5 space-y-3 border-t border-white/10 pt-5 text-sm">
-            <div className="flex justify-between"><span className="text-white/70">Subtotal</span><span>{formatEUR(totals.subtotalGross)}</span></div>
-            <div className="flex justify-between"><span className="text-white/70">Shipping</span><span>{totals.shippingGross === 0 ? "Free" : formatEUR(totals.shippingGross)}</span></div>
-            <div className="flex justify-between"><span className="text-white/70">VAT 21%</span><span>{totals.vatExempt ? "Reverse charge" : formatEUR(totals.vatAmount)}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-white/70">Subtotal</span><span className="shrink-0">{formatEUR(totals.subtotalGross)}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-white/70">Shipping</span><span className="shrink-0">{totals.shippingGross === 0 ? "Free" : formatEUR(totals.shippingGross)}</span></div>
+            <div className="flex justify-between gap-4"><span className="text-white/70">VAT 21%</span><span className="shrink-0">{totals.vatExempt ? "Reverse charge" : formatEUR(totals.vatAmount)}</span></div>
             <p className="rounded-md bg-white/10 p-3 text-xs text-white/70">
               Free shipping from {formatEUR(totals.shippingRule.threshold)} for {totals.shippingRule.label}.
             </p>
           </div>
-          <div className="mt-5 flex justify-between border-t border-white/10 pt-5 text-lg font-bold">
+          <div className="mt-5 flex justify-between gap-4 border-t border-white/10 pt-5 text-lg font-bold">
             <span>Total</span>
-            <span>{formatEUR(totals.total)}</span>
+            <span className="shrink-0">{formatEUR(totals.total)}</span>
           </div>
         </aside>
       </div>

@@ -69,6 +69,7 @@ function mapProduct(row: ProductRow): Product {
     image: row.image_url,
     gallery: row.gallery_urls || [],
     basePrice,
+    price: basePrice,
     currency: "EUR",
     status: row.status,
     isBestSeller: Boolean(row.is_best_seller),

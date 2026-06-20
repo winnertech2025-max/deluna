@@ -48,15 +48,15 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cocoa">Account</p>
-          <h1 className="mt-3 text-4xl font-semibold text-ink">Welkom, {name}</h1>
+          <h1 className="mt-3 break-words text-3xl font-semibold text-ink sm:text-4xl">Welkom, {name}</h1>
         </div>
         <Button variant="secondary" onClick={logout}>Logout</Button>
       </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-        <form action={save} className="rounded-lg border border-black/10 bg-white p-6 shadow-soft">
+        <form action={save} className="rounded-lg border border-black/10 bg-white p-4 shadow-soft sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="text-sm font-semibold">Name<input value={name} onChange={(event) => setName(event.target.value)} className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>
             <label className="text-sm font-semibold">Email<input value={email} onChange={(event) => setEmail(event.target.value)} className="focus-ring mt-2 w-full rounded-md border border-black/15 px-4 py-3" /></label>

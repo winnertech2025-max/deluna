@@ -11,6 +11,7 @@ export type ProductVariant = {
 };
 
 export type Product = {
+  price: any;
   id: string;
   slug: string;
   name: string;

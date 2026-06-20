@@ -3,6 +3,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/components/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { WhatsappButton } from "@/components/whatsapp-button";
 
 export const metadata: Metadata = {
   title: "Deluna | Personalized pieces, made just for you",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SiteHeader />
           <main>{children}</main>
           <SiteFooter />
+          <WhatsappButton />
         </LanguageProvider>
       </body>
     </html>

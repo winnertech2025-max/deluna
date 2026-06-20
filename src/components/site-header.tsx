@@ -74,20 +74,25 @@ export function SiteHeader() {
           </span> */}
         </div>
       </div>
-      <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
         <Link href="/" className="flex items-center gap-3">
-          <Image src="/images/rmbg.png" alt="Deluna Studio" width={52} height={52} className="h-10 w-10 rounded-full object-cover sm:h-11 sm:w-11" />
-          <span className="hidden text-lg font-bold tracking-[0.18em] text-ink sm:block">DELUNA</span>
-        </Link>
+  <Image
+    src="/images/rmbg.png"
+    alt="Deluna Studio"
+    width={80}
+    height={80}
+    className="h-14 w-14 rounded-full object-cover sm:h-16 sm:w-16"
+  />
+      </Link>
 
-        <nav className="hidden items-center justify-center gap-7 text-sm font-medium text-cocoa lg:flex">
+        <nav className="hidden min-w-0 items-center justify-center gap-4 text-sm font-medium text-cocoa lg:flex xl:gap-7">
           <div className="relative" ref={categoryRef}>
             <button onClick={() => setOpen((value) => !value)} className="flex items-center gap-1 rounded-full px-3 py-2 hover:bg-linen">
               {t("categories")} <FiChevronDown className={open ? "rotate-180" : ""} />
             </button>
             {open ? (
-              <div className="absolute left-1/2 top-11 w-[960px] -translate-x-1/2 rounded-md border border-black/10 bg-white px-8 py-7 shadow-soft">
-                <div className="grid grid-cols-6 gap-7">
+              <div className="fixed left-1/2 top-[112px] z-50 max-h-[calc(100vh-128px)] w-[min(1120px,calc(100vw-24px))] -translate-x-1/2 overflow-y-auto rounded-2xl border border-black/10 bg-white px-4 py-5 shadow-2xl xl:px-6">
+                <div className="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-6 xl:gap-6">
                 {categoryMenu.map((group) => {
                   const Icon = group.icon;
                   return (
@@ -96,7 +101,7 @@ export function SiteHeader() {
                         <Icon className="h-4 w-4 text-orange-600" />
                         <span className="leading-5">{group.label.replace("Personalized ", "")}</span>
                       </Link>
-                      <div className="mt-4 grid gap-2">
+                      <div className="mt-3 grid gap-1.5">
                         {group.children.map(([slug, label]) => (
                           <Link key={slug} href={`/shop?category=${slug}`} onClick={() => setOpen(false)} className="block text-[13px] leading-5 text-cocoa transition hover:text-orange-700">
                             {label}
@@ -107,7 +112,7 @@ export function SiteHeader() {
                   );
                 })}
                 </div>
-                <div className="mt-7 flex items-center justify-between border-t border-black/10 pt-5">
+                <div className="mt-5 flex items-center justify-between gap-4 border-t border-black/10 pt-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cocoa">Choose it. Personalize it. Make it yours.</p>
                   <Link href="/shop?best=1" onClick={() => setOpen(false)} className="rounded-full bg-ink px-5 py-2 text-xs font-bold uppercase tracking-[0.08em] text-white hover:bg-orange-600">
                     Best sellers
@@ -122,7 +127,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center justify-end gap-2">
-          <form action="/shop" className="hidden min-w-[320px] items-center rounded-full border border-orange-200 bg-white px-3 py-2 xl:flex">
+          <form action="/shop" className="hidden w-[min(34vw,390px)] min-w-0 items-center rounded-full border border-orange-200 bg-white px-3 py-2 xl:flex">
             <input name="q" placeholder={t("searchPlaceholder")} className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
             <button aria-label="Search" className="rounded-full bg-champagne p-2 text-ink"><FiSearch /></button>
           </form>
@@ -130,9 +135,9 @@ export function SiteHeader() {
             {locale}
           </button>
           <div className="relative" ref={accountRef}>
-            <button onClick={() => setAccountOpen((value) => !value)} className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold hover:bg-linen">
+            <button onClick={() => setAccountOpen((value) => !value)} className="inline-flex items-center gap-2 rounded-full px-2 py-2 text-sm font-bold hover:bg-linen sm:px-3">
               {name ? <span className="hidden max-w-[140px] truncate sm:inline">{name}</span> : <span className="hidden sm:inline">Login</span>}
-              {/* <FiUser size={19} /> */}
+              <FiUser size={19} />
             </button>
             {accountOpen ? (
               <div className="absolute right-0 top-11 w-56 overflow-hidden rounded-lg border border-black/10 bg-white py-2 shadow-soft">
